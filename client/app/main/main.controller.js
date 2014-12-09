@@ -1,7 +1,10 @@
 'use strict';
 
 angular.module('meApp')
-  .controller('MainCtrl', function ($scope, $http, socket) {
+  .controller('MainCtrl', function ($scope, $http, socket, Auth) {
+
+    $scope.Auth = Auth;
+
     $scope.awesomeThings = [];
 
     $http.get('/api/things').success(function(awesomeThings) {

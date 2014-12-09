@@ -1,1 +1,5 @@
-<div ng-include="'app/account/login/login.html'"></div>
+<div ng-if="!Auth.isLoggedIn()" ng-include="'app/account/login/login.html'"></div>
+<div ng-if="Auth.isLoggedIn()">
+    <h1>Hello Liz!!!!</h1>
+    <a href="" ng-click="Auth.logout()">Log out!!</a>
+</div>
