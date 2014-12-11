@@ -54,6 +54,7 @@ User.find({}).remove(function() {
 
 Practice.find({}).remove(function() {
     Practice.create({
+        name: "Rza's Practice",
         facility: [{
             name: "Down town office",
             contact: {
@@ -91,7 +92,48 @@ Practice.find({}).remove(function() {
             password: 'admin'
         }],
         active: true
-    }, function() {
+    },
+    {
+        name: "Danky's Office",
+        facility: [{
+            name: "Seattle Office",
+            contact: {
+                address: {
+                    number: 2010,
+                    direction: "",
+                    street: "Westlake Drive",
+                    zip5: 80101,
+                    country: "United States"
+                },
+                phone: [{description: "Office", number: "2123321112"}],
+                email: "jpdanks@gmail.com",
+                canSMS: 1,
+                canVoice: 1,
+                canEmail: 1,
+                preferred: 1
+            },
+            hours: [{
+                day: "Tuesday",
+                start: 8,
+                end: 17
+            }]
+        }],
+        user: [{
+            provider: 'local',
+            name: 'Dankys',
+            email: 'jpdanks@gmail.com',
+            password: 'dankys'
+        },
+            {
+                provider: 'local',
+                role: 'admin',
+                name: 'Admin',
+                email: 'kingtut@gmail.com',
+                password: 'admin'
+            }],
+        active: true
+    },
+        function() {
         console.log('finished populating practice');
     })
 });
