@@ -7,6 +7,8 @@
 
 var Thing = require('../api/thing/thing.model');
 var User = require('../api/user/user.model');
+var Practice = require('../api/practice/practice.model');
+
 
 Thing.find({}).remove(function() {
   Thing.create({
@@ -47,3 +49,57 @@ User.find({}).remove(function() {
     }
   );
 });
+
+
+
+Practice.find({}).remove(function() {
+    Practice.create({
+        facility: [{
+            name: "Down town office",
+            contact: {
+                address: {
+                    number: 1022,
+                    direction: "",
+                    street: "Trenton Pl",
+                    zip5: 19801,
+                    country: "United States"
+                },
+                phone: [{description: "Office", number: "2679753526"}],
+                email: "rizzo0917@gmail.com",
+                canSMS: 1,
+                canVoice: 1,
+                canEmail: 1,
+                preferred: 1
+            },
+            hours: [{
+                day: "Monday",
+                start: 8,
+                end: 17
+            }]
+        }],
+        user: [{
+            provider: 'local',
+            name: 'Test User',
+            email: 'test@test.com',
+            password: 'test'
+        },
+        {
+            provider: 'local',
+            role: 'admin',
+            name: 'Admin',
+            email: 'admin@admin.com',
+            password: 'admin'
+        }],
+        active: true
+    }, function() {
+        console.log('finished populating practice');
+    })
+});
+
+
+
+
+
+
+
+
