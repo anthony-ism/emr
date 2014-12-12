@@ -3,46 +3,19 @@
 var mongoose = require('mongoose'),
     Schema = mongoose.Schema;
 
-
-var address = {
-    number: Number,
-    direction: String,
-    street: String,
-    zip5: Number,
-    zip4: Number,
-    country: String
-}
-
-
-var phone = {
-    description: String,
-    number: String
-}
-
-var contact = {
-    address : address,
-    phone : [ phone ],
-    email: String,
-    canSMS: Boolean,
-    canVoice: Boolean,
-    canEmail: Boolean,
-    preferred: Number
-
-}
-
-var day = {
-    day: String,
-    start: Number,
-    end: Number
-}
+var contact = require('../../genericModels/contact.js');
 
 
 var PracticeSchema = new Schema({
     name: String,
     facility: [{
         name: String,
-        contact: contact,
-        hours: [ day ]
+        contact: contact.contact,
+        hours: [ {
+            day: String,
+            start: Number,
+            end: Number
+        }]
     }],
     user: [
         {
