@@ -37,7 +37,8 @@ var PatientSchema = new Schema({
     medicalInfo: Object,
     allergies: [String],
     medications: [String],
-    active: Boolean
+    active: Boolean,
+    practiceID: String
 });
 
 module.exports = mongoose.model('Patient', PatientSchema);

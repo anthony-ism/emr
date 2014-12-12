@@ -23,11 +23,10 @@ User.find({}).remove(function() {
   );
 });
 
-
-
 Practice.find({}).remove(function() {
-    Practice.create(PracticeSeed.seed, function() {
-        console.log('finished populating practice');
+    Practice.create(PracticeSeed.seed, function(err, rizzo, danks) {
+        console.log(rizzo);
+        console.log(danks);
     })
 });
 

@@ -1,7 +1,7 @@
 /**
  * Created by anthony on 12/12/14.
  */
-exports.seed =  {
+exports.seed =  [{
     name: "Rza's Practice",
     facility: [{
         name: "Down town office",
@@ -80,4 +80,4 @@ exports.seed =  {
             password: 'admin'
         }],
     active: true
-}
+}]
