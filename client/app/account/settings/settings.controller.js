@@ -17,5 +17,5 @@ angular.module('meApp')
           $scope.message = '';
         });
       }
-		};
+    };
   });

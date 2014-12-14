@@ -47,7 +47,11 @@ angular.module('meApp', [
     $rootScope.$on('$stateChangeStart', function (event, next) {
       Auth.isLoggedInAsync(function(loggedIn) {
         if (next.authenticate && !loggedIn) {
-          $location.path('/login');
+            if (next.name.indexOf("admin") == -1)
+                $location.path('/login');
+            else
+                $location.path('/adminLogin');
+
         }
       });
     });

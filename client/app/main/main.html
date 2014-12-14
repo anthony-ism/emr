@@ -1,5 +1,2 @@
+<h1> This is the landing page for our application. Login logs you into the application</h1>
 <div ng-if="!Auth.isLoggedIn()" ng-include="'app/account/login/login.html'"></div>
-<div ng-if="Auth.isLoggedIn()">
-    <h1>Hello Liz!!!!</h1>
-    <a href="" ng-click="Auth.logout()">Log out!!</a>
-</div>

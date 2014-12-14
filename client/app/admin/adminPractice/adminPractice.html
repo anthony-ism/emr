@@ -1,0 +1,42 @@
+<div ng-include="'components/adminNavbar/adminNavbar.html'"></div>
+<div class="container">
+  <p>
+      This is the area where we info about a particular practice and edit and whatnot!
+  </p>
+    <pre> {{ output(practice) }}</pre>
+
+    <h1> General Info</h1>
+    <form class="form" name="formGeneral" ng-submit="submitGeneral(formGeneral)" novalidate>
+        <div class="form-group" ng-class="{ 'has-success': form.name.$valid && submitted,
+                                            'has-error': form.name.$invalid && submitted }">
+            <label>Name</label>
+            <input type="text" name="name" class="form-control" ng-model="practice.name" required/>
+            <p class="help-block" ng-show="form.name.$error.required && submitted">
+                A name is required
+            </p>
+            <label>Active</label>
+            <input type="checkbox" name="active" class="form-control" ng-model="practice.active"/>
+        </div>
+        <div>
+            <button class="btn btn-inverse btn-lg btn-login" type="submit">
+                Make Changes
+            </button>
+        </div>
+    </form>
+    <hr />
+    <h1> Users </h1>
+    <form class="form" name="formUser" ng-submit="submitUser(formUser)" novalidate>
+        <label>Name</label>
+        <input type="text" name="name" class="form-control" ng-model="practice.user[0].name" required/>
+        <p class="help-block" ng-show="form.name.$error.required && submitted">
+            A name is required
+        </p>
+        <div>
+            <button class="btn btn-inverse btn-lg btn-login" type="submit">
+                Make Changes
+            </button>
+        </div>
+    </form>
+
+
+</div>

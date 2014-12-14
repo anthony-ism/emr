@@ -5,31 +5,35 @@ var mongoose = require('mongoose'),
 
 var contact = require('../../genericModels/contact.js');
 
+var UserSchema = new Schema({
+    name: String,
+    email: { type: String, lowercase: true },
+    role: {
+        type: String,
+        default: 'user'
+    },
+    hashedPassword: String,
+    provider: String,
+    salt: String
+});
+
+
+var HoursSchema = new Schema({
+    day: String,
+    start: Number,
+    end: Number
+});
+
+
 
 var PracticeSchema = new Schema({
     name: String,
     facility: [{
         name: String,
         contact: contact.contact,
-        hours: [ {
-            day: String,
-            start: Number,
-            end: Number
-        }]
+        hours: [ HoursSchema ]
     }],
-    user: [
-        {
-            name: String,
-            email: { type: String, lowercase: true },
-            role: {
-                type: String,
-                default: 'user'
-            },
-            hashedPassword: String,
-            provider: String,
-            salt: String
-        }
-    ],
+    user: [UserSchema],
     active: Boolean
 });
 

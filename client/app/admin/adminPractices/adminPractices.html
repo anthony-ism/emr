@@ -1,0 +1,10 @@
+<div ng-include="'components/adminNavbar/adminNavbar.html'"></div>
+<div class="container">
+  <p>
+      This is the area where we list our current practices, add and remove.
+  </p>
+
+    <ul>
+        <li ng-repeat="practice in practices"><a href="/adminPractice/{{practice._id}}"> {{ practice.name }} </a> </li>
+    </ul>
+</div>

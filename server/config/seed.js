@@ -12,6 +12,7 @@ var UserSeed = require('./seeds/user.seed');
 var Practice = require('../api/practice/practice.model');
 var PracticeSeed = require('./seeds/practice.seed');
 
+return;
 
 Thing.find({}).remove(function() {
   Thing.create(ThingSeed.seed)});
