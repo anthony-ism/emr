@@ -32,13 +32,23 @@ exports.findSubById = function(req, res) {
         if(!practice) { return res.send(404); }
         var params = originalUrl.split("/");
         try {
-            if (practice[params[4]] !== undefined && params.length == 6) {
+            if (practice[params[4]] !== undefined && params.length == 6)
+            {
                 return res.json(practice[params[4]].id(params[5]));
             }
-            else if (practice[params[4]].id(params[5])[params[6]] !== undefined && params.length == 7) {
-                return res.json(practice[params[4]].id(params[5])[params[6]]);
+            else if (params.length == 7)
+            {
+
+                if (practice[params[4]].id(params[5])[params[6]] !== undefined)
+                    return res.json(practice[params[4]].id(params[5])[params[6]]);
+                else
+                {
+                    var subParams = params[6].split(".");
+                    return res.json(practice[params[4]].id(params[5])[subParams[0]][subParams[1]]);
+                }
             }
-            else if (practice[params[4]].id(params[5])[params[6]] !== undefined && params.length == 8) {
+            else if (practice[params[4]].id(params[5])[params[6]] !== undefined && params.length == 8)
+            {
                 return res.json(practice[params[4]].id(params[5])[params[6]].id(params[7]));
             }
         } catch(err)
@@ -65,7 +75,21 @@ exports.createSub = function(req, res) {
         if (err) { return handleError(res, err); }
         if (!practice) { return res.send(404); }
         var params = originalUrl.split("/");
-        practice[params[4]].push(req.body);
+
+
+        if (practice[params[4]] !== undefined && params.length == 5)
+            practice[params[4]].push(req.body);
+        else if (params.length == 7)
+        {
+            if (practice[params[4]].id(params[5])[params[6]] !== undefined)
+                practice[params[4]].id(params[5])[params[6]].push(req.body);
+            else
+            {
+                var subParams = params[6].split(".");
+                practice[params[4]].id(params[5])[subParams[0]][subParams[1]].push(req.body);
+            }
+        }
+
         practice.save(function (err) {
             if (err) { return handleError(res, err); }
             return res.json(200, practice[params[4]]);

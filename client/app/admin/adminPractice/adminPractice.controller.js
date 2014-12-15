@@ -79,6 +79,19 @@ angular.module('meApp')
                 }
             }
         }
+
+
+        $scope.deleteHours = function($index)
+        {
+            console.log("here");
+            $scope.submitted = true;
+            $http.delete("/api/practices/" + $stateParams.id + "/facility/" + $scope.practice.facility[0]._id + "/hours/"
+                + $scope.practice.facility[0].hours[$index]._id,
+                $scope.practice.facility[0].hours[$index]).then(function (response) {
+                    console.log(response);
+                    console.log("deleted");
+                });
+        }
   });
 
 
