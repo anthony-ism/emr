@@ -17,6 +17,7 @@
             <label>Active</label>
             <input type="checkbox" name="active" class="form-control" ng-model="practice.active"/>
         </div>
+
         <div>
             <button class="btn btn-inverse btn-lg btn-login" type="submit">
                 Make Changes
@@ -47,6 +48,54 @@
                 <p class="help-block" ng-show="form.name.$error.required && submitted">
                     A name is required
                 </p>
+                <h2> Address </h2>
+
+                <label>Number</label>
+                <input type="text" name="name" class="form-control" ng-model="practice.facility[$index].contact.address.number" required/>
+                <p class="help-block" ng-show="form.name.$error.required && submitted">
+                    A Address Number is required
+                </p>
+
+                <label>Direction</label>
+                <input type="text" name="name" class="form-control" ng-model="practice.facility[$index].contact.address.direction"/>
+
+                <label>Street</label>
+                <input type="text" name="name" class="form-control" ng-model="practice.facility[$index].contact.address.street" required/>
+                <p class="help-block" ng-show="form.name.$error.required && submitted">
+                    A Address Street is required
+                </p>
+
+                <label>Zip</label>
+                <input type="text" name="name" class="form-control" ng-model="practice.facility[$index].contact.address.zip5" required/>
+                <p class="help-block" ng-show="form.name.$error.required && submitted">
+                    A Address Zip is required
+                </p>
+
+                <label>Country</label>
+                <input type="text" name="name" class="form-control" ng-model="practice.facility[$index].contact.address.country" required/>
+                <p class="help-block" ng-show="form.name.$error.required && submitted">
+                    A Address Country is required
+                </p>
+
+                <h2> Contact </h2>
+                <label>Can Email</label>
+                <input type="checkbox" name="active" class="form-control" ng-model="practice.facility[$index].contact.canEmail"/>
+
+                <label>Can SMS</label>
+                <input type="checkbox" name="active" class="form-control" ng-model="practice.facility[$index].contact.canSMS"/>
+
+                <label>Can Voice</label>
+                <input type="checkbox" name="active" class="form-control" ng-model="practice.facility[$index].contact.canVoice"/>
+
+
+                <label>Email</label>
+                <input type="text" name="name" class="form-control" ng-model="practice.facility[$index].contact.email" required/>
+                <p class="help-block" ng-show="form.name.$error.required && submitted">
+                    A Contact Email is required
+                </p>
+
+
+
                 <div>
                     <button class="btn btn-inverse btn-lg btn-login" type="submit">
                         Make Changes
@@ -54,6 +103,7 @@
                 </div>
             </form>
 
+            <h3> Contact Phones </h3>
 
             <h2> Hours </h2> <a href="" ng-click="facility.hours.push({})"> + </a>
             <ul>
