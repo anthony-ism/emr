@@ -38,5 +38,49 @@
         </div>
     </form>
 
+    <h1> Facilities </h1>
+    <ul>
+        <li ng-repeat="facility in practice.facility">
+            <form class="form" name="formFacility" ng-submit="submitFacility(formFacility, $index)" novalidate>
+                <label>Name</label>
+                <input type="text" name="name" class="form-control" ng-model="practice.facility[$index].name" required/>
+                <p class="help-block" ng-show="form.name.$error.required && submitted">
+                    A name is required
+                </p>
+                <div>
+                    <button class="btn btn-inverse btn-lg btn-login" type="submit">
+                        Make Changes
+                    </button>
+                </div>
+            </form>
 
+
+            <h2> Hours </h2> <a href="" ng-click="facility.hours.push({})"> + </a>
+            <ul>
+                <li ng-repeat="hour in practice.facility[$index].hours">
+                    <form class="form" name="formFacilityHours" ng-submit="submitFacilityHours(formFacilityHours, $index)" novalidate>
+                        <label>Day</label>
+                        <input type="text" name="name" class="form-control" ng-model="facility.hours[$index].day" required/>
+                        <p class="help-block" ng-show="form.name.$error.required && submitted">
+                            A Day is required
+                        </p>
+                        <label>Start</label>
+                        <input type="text" name="name" class="form-control" ng-model="facility.hours[$index].start" required/>
+                        <p class="help-block" ng-show="form.name.$error.required && submitted">
+                            A start time is required
+                        </p>
+                        <label>End</label>
+                        <input type="text" name="name" class="form-control" ng-model="facility.hours[$index].end" required/>
+                        <p class="help-block" ng-show="form.name.$error.required && submitted">
+                            An end time is required
+                        </p>
+                        <div>
+                            <button class="btn btn-inverse btn-lg btn-login" type="submit">
+                                Make Changes
+                            </button>
+                        </div>
+                    </form>
+                </li>
+            </ul>
+        </li>
 </div>

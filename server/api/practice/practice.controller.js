@@ -141,7 +141,7 @@ exports.destroySub = function(req, res) {
         if (practice[params[4]] !== undefined && params.length == 6)
             object = practice[params[4]].pull({_id: params[5]});
         else if (practice[params[4]].id(params[5])[params[6]] !== undefined && params.length == 8)
-            object = practice[params[4]].id(params[5])[params[6]].pull({_id: params[7]));
+            object = practice[params[4]].id(params[5])[params[6]].pull({_id: params[7]});
 
         practice.save(function (err) {
             if (err) { return handleError(res, err); }
