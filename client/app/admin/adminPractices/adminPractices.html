@@ -3,7 +3,7 @@
   <p>
       This is the area where we list our current practices, add and remove.
   </p>
-
+    <button ng-click="addNew();"> Add New Practice </button>
     <ul>
         <li ng-repeat="practice in practices"><a href="/adminPractice/{{practice._id}}"> {{ practice.name }} </a> </li>
     </ul>

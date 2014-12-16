@@ -1,9 +1,21 @@
 'use strict';
 
 angular.module('meApp')
-  .controller('AdminPracticesCtrl', function ($scope, Practice) {
+  .controller('AdminPracticesCtrl', function ($scope, Practice, $http, $state) {
         // Use the User $resource to fetch all practices
         $scope.practices = Practice.query();
+
+        $scope.addNew = function()
+        {
+            var practice = prompt("Please enter name", "");
+
+            if (practice != null)
+            {
+                $http.post("/api/practices", {name: practice}).then(function(response) {
+                    $state.transitionTo('adminPractice', {id: response.data._id});
+                });
+            }
+        }
   });
 
 
