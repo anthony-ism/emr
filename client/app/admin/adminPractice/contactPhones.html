@@ -1,0 +1,25 @@
+<h3> Contact Phones <a href="" ng-click="facility.contact.phone.push({})"> + </a> </h3>
+<ul>
+    <li ng-repeat="phone in practice.facility[$index].contact.phone">
+        <form class="form" name="formContactPhone" ng-submit="submitFacilityContactPhone(formContactPhone, practice, facility, phone)" novalidate>
+            <label>Description</label>
+            <input type="text" name="name" class="form-control" ng-model="phone.description" required/>
+            <p class="help-block" ng-show="form.name.$error.required && submitted">
+                A Description is required
+            </p>
+            <label>Number</label>
+            <input type="text" name="name" class="form-control" ng-model="phone.number" required/>
+            <p class="help-block" ng-show="form.name.$error.required && submitted">
+                A number is required
+            </p>
+            <div>
+                <button class="btn btn-inverse btn-lg btn-login" type="submit">
+                    Make Changes
+                </button>
+                <a href="#" class="btn btn-inverse btn-lg btn-login" ng-click="deleteFacilityContactPhone(practice, facility, phone)" ng-if="phone._id">
+                    Delete
+                </a>
+            </div>
+        </form>
+    </li>
+</ul>

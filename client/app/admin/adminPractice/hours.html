@@ -1,0 +1,31 @@
+<h2> Hours  <a href="" ng-click="facility.hours.push({})"> + </a> </h2>
+<ul>
+    <li ng-repeat="hour in practice.facility[$index].hours">
+        <form class="form" name="formFacilityHours"
+              ng-submit="submitFacilityHours(formFacilityHours, practice, facility, hour)" novalidate>
+            <label>Day</label>
+            <input type="text" name="name" class="form-control" ng-model="facility.hours[$index].day" required/>
+            <p class="help-block" ng-show="form.name.$error.required && submitted">
+                A Day is required
+            </p>
+            <label>Start</label>
+            <input type="text" name="name" class="form-control" ng-model="facility.hours[$index].start" required/>
+            <p class="help-block" ng-show="form.name.$error.required && submitted">
+                A start time is required
+            </p>
+            <label>End</label>
+            <input type="text" name="name" class="form-control" ng-model="facility.hours[$index].end" required/>
+            <p class="help-block" ng-show="form.name.$error.required && submitted">
+                An end time is required
+            </p>
+            <div>
+                <button class="btn btn-inverse btn-lg btn-login" type="submit">
+                    Make Changes
+                </button>
+                <a href="#" class="btn btn-inverse btn-lg btn-login" ng-click="deleteHours(practice, facility, hour)">
+                    Delete
+                </a>
+            </div>
+        </form>
+    </li>
+</ul>

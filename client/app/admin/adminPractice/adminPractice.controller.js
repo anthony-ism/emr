@@ -3,19 +3,21 @@
 angular.module('meApp')
   .controller('AdminPracticeCtrl', function ($scope, Practice, $stateParams, $http) {
         // Use the User $resource to fetch all practices
-        $scope.practice = Practice.get({ id: $stateParams.id });
+
+
 
         $scope.output = function() {
             return JSON.stringify($scope.practice, undefined, 2);
         }
 
+        /******** General Functions ********/
         var endPointArrayToString = function(arr)
         {
             var result = "/api"
             for (var i = 0; i < arr.length; i++)
             {
-                if (arr[i].id !== undefined)
-                    result += "/" + arr[i].endPoint + "/" + arr[i].id;
+                if (arr[i].obj._id !== undefined)
+                    result += "/" + arr[i].endPoint + "/" + arr[i].obj._id;
                 else
                     result += "/" + arr[i].endPoint;
 
@@ -24,48 +26,77 @@ angular.module('meApp')
         }
 
 
-        var submitEndpoint = function(arr, endpoint, form, object)
-        {
+
+        var submitEndpoint = function(arr, endpoint, form, object) {
+
+            delete object.$$hashKey;
             $scope.submitted = true;
-            if(form.$valid) {
-                if (arr[arr.length-1].id !== undefined)
-                {
+            if (form.$valid) {
+                if (arr[arr.length - 1].id !== undefined) {
                     $http.put(endpoint, object).then(function (response) {
                         console.log(response);
                         console.log("updated");
                     });
                 }
-                else
-                {
+                else {
                     $http.post(endpoint, object).then(function (response) {
                         console.log(response);
                         console.log("inserted");
                     });
                 }
+            }
         }
 
 
-        $scope.submitGeneral = function(form) {
-            console.log("general submit");
-            $scope.submitted = true;
-            if(form.$valid) {
-                Practice.put(
-                    { id: $stateParams.id },
-                    {
-                        name: $scope.practice.name,
-                        active: $scope.practice.active
-                    }
-                )
-                .$promise.then( function() {
-                    console.log("updated");
-                })
-                .catch( function() {
-                    console.log("error");
-                });
-            }
-        };
-
         /******** Practice User Crud ********/
+        $scope.practice = Practice.get({ id: $stateParams.id });
+
+
+        $scope.submitPractice = function(form, practice) {
+            var arr = [{ endPoint: "practices", obj: practice}];
+            var endpoint = endPointArrayToString(arr);
+            submitEndpoint(arr, endpoint, form, practice);
+        }
+
+        $scope.deletePractice = function(practice)
+        {
+            $scope.submitted = true;
+            var arr = [{ endPoint: "practices", obj: practice}];
+            var endpoint = endPointArrayToString(arr);
+            $http.delete(endpoint).then(function (response) {
+                console.log(response);
+                console.log("deleted");
+            });
+        }
+
+        /******** Facility Crud ********/
+
+         $scope.submitFacility = function(form, practice, facility)
+         {
+            var arr = [
+                { endPoint: "practices", obj: practice},
+                { endPoint: "facility", obj: facility}
+            ];
+            var endpoint = endPointArrayToString(arr);
+            submitEndpoint(arr, endpoint, form, facility);
+         }
+
+
+         $scope.deleteFacility = function(practice, facility)
+         {
+            $scope.submitted = true;
+            var arr = [
+                { endPoint: "practices", obj: practice},
+                { endPoint: "facility", obj: facility}
+            ];
+            var endpoint = endPointArrayToString(arr);
+            $http.delete(endpoint).then(function (response) {
+                console.log(response);
+                console.log("deleted");
+            });
+         }
+
+        /*
         $scope.submitUser = function(form)
         {
             $scope.submitted = true;
@@ -78,73 +109,61 @@ angular.module('meApp')
                     });
             }
         }
+        */
 
-        /******** Facility Crud ********/
-        $scope.submitFacility = function(form, facility)
+
+        /******** Facility Hours Crud ********/
+
+        var facilityHoursArray = function(practice, facility, hours)
         {
-            console.log("come home with me");gi
-            var arr =
-                [
-                    { endPoint: "practices", id: $stateParams.id},
-                    { endPoint: "facility", id: facility._id}
-                ]
-                var endpoint = endPointArrayToString(arr);
-                submitEndpoint(arr, endpoint, form, facility);
-            }
+            return [{ endPoint: "practices", obj: practice},
+                    { endPoint: "facility", obj: facility},
+                    { endPoint: "hours", obj: hours}];
+        }
+        $scope.submitFacilityHours = function(form, practice, facility, hours)
+        {
+
+            var arr = facilityHoursArray(practice, facility, hours);
+            var endpoint = endPointArrayToString(arr);
+            submitEndpoint(arr, endpoint, form, hours);
         }
 
-        $scope.deleteFacility = function(facility)
+        $scope.deleteHours = function(practice, facility, hours)
         {
             $scope.submitted = true;
-            var arr =
-                [
-                    { endPoint: "practices", id: $stateParams.id},
-                    { endPoint: "facility", id: facility._id}
-                ]
+            var arr = facilityHoursArray(practice, facility, hours);
             var endpoint = endPointArrayToString(arr);
-            $http.delete(endPoint).then(function (response) {
+            $http.delete(endpoint).then(function (response) {
                 console.log(response);
                 console.log("deleted");
             });
         }
 
-        /******** Facility Hours Crud ********/
-        $scope.submitFacilityHours = function(form, facility, hours)
+        /******** Contact Phone Crud ********/
+        var facilityContactPhone = function(practice, facility, phone)
         {
-            var arr =
-                [
-                    { endPoint: "practices", id: $stateParams.id},
-                    { endPoint: "facility", id: facility._id},
-                    { endPoint: "hours", id: hours._id},
-                ]
-            var endpoint = endPointArrayToString(arr);
-            submitEndpoint(arr, endpoint, form);
+            return [{ endPoint: "practices", obj: practice},
+                { endPoint: "facility", obj: facility},
+                { endPoint: "contact.phone", obj: phone}];
         }
 
-        $scope.deleteHours = function($index)
+        $scope.submitFacilityContactPhone = function(form, practice, facility, phone)
+        {
+            var arr = facilityContactPhone(practice, facility, phone);
+            var endpoint = endPointArrayToString(arr);
+            submitEndpoint(arr, endpoint, form, phone);
+        }
+
+        $scope.deleteFacilityContactPhone = function(practice, facility, phone)
         {
             $scope.submitted = true;
-            var arr =
-                [
-                    { endPoint: "practices", id: $stateParams.id},
-                    { endPoint: "facility", id: facility._id},
-                    { endPoint: "hours", id: hours._id},
-                ]
+            var arr = facilityContactPhone(practice, facility, phone);
             var endpoint = endPointArrayToString(arr);
             $http.delete(endpoint).then(function (response) {
-                    console.log(response);
-                    console.log("deleted");
-                });
+                console.log(response);
+                console.log("deleted");
+            });
         }
 
-        /******** Contact Phone Crud ********/
 
-
-
-
-
-
-  });
-
-
-
+    });
