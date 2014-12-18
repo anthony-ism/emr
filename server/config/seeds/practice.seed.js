@@ -28,6 +28,7 @@ exports.seed =  [{
     }],
     user: [{
         provider: 'local',
+        role: 'user',
         name: 'Test User',
         email: 'test@test.com',
         password: 'test'
@@ -70,7 +71,8 @@ exports.seed =  [{
         provider: 'local',
         name: 'Dankys',
         email: 'jpdanks@gmail.com',
-        password: 'dankys'
+        password: 'dankys',
+        role: 'user'
     },
         {
             provider: 'local',
