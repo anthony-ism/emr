@@ -2,7 +2,7 @@ var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 
 exports.setup = function (Practice, config) {
-  passport.use(new LocalStrategy({
+  passport.use('practice', new LocalStrategy({
       usernameField: 'email',
       passwordField: 'password' // this is the virtual field on the model
     },

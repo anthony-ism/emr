@@ -10,6 +10,15 @@ exports.index = function(req, res) {
   });
 };
 
+exports.me = function(req, res, next) {
+    var userId = req.user._id;
+    Practice.findOne({'user._id': userId}, '-salt -hashedPassword', function(err, user) { // don't ever give out the password or salt
+        if (err) return next(err);
+        if (!user) return res.json(401);
+        res.json(user);
+    });
+};
+
 // Get a single practice or any of its subdocuments by property name
 exports.show = function(req, res) {
     var originalUrl = req.originalUrl;

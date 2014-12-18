@@ -9,6 +9,8 @@ var auth = require('../../auth/auth.service');
 
 router.get('/', auth.hasRole('admin'), controller.index);
 
+router.get('/me', auth.isAuthenticated(), controller.me);
+
 //router.get('/:id/user', controller.show);
 //router.get('/:id/user/:id2', controller.findSubById);
 router.get('/:id', controller.show);

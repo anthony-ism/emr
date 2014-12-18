@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('meApp')
-  .controller('LoginCtrl', function ($scope, Auth, $location) {
+  .controller('LoginCtrl', function ($scope, PracticeAuth, $location) {
     $scope.user = {};
     $scope.errors = {};
 
@@ -9,7 +9,7 @@ angular.module('meApp')
       $scope.submitted = true;
 
       if(form.$valid) {
-        Auth.login({
+        PracticeAuth.login({
           email: $scope.user.email,
           password: $scope.user.password
         })
