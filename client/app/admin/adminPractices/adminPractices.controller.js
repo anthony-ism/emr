@@ -38,6 +38,12 @@ angular.module('meApp')
                     params: {
                         id: '@_id'
                     }
+                },
+                me: {
+                    method: 'GET',
+                    params: {
+                        id:'me'
+                    }
                 }
             });
     });

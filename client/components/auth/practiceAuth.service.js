@@ -1,10 +1,10 @@
 'use strict';
 
 angular.module('meApp')
-  .factory('PracticeAuth', function PracticeAuth($location, $rootScope, $http, $cookieStore, $q, User) {
+  .factory('PracticeAuth', function PracticeAuth($location, $rootScope, $http, Practice, $cookieStore, $q) {
     var currentUser = {};
     if($cookieStore.get('token')) {
-      currentUser = Practice.get();
+      currentUser = User.get();
     }
 
     return {
@@ -20,13 +20,13 @@ angular.module('meApp')
         var cb = callback || angular.noop;
         var deferred = $q.defer();
 
-        $http.post('/practiceAuth/local', {
+        $http.post('/auth/practice', {
           email: user.email,
           password: user.password
         }).
         success(function(data) {
           $cookieStore.put('token', data.token);
-          currentUser = User.get();
+          currentUser = Practice.me();
           deferred.resolve(data);
           return cb();
         }).

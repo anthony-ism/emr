@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('meApp')
-  .controller('LoginCtrl', function ($scope, PracticeAuth, $location) {
+  .controller('LoginCtrl', function ($scope, PracticeAuth, $location, $state) {
     $scope.user = {};
     $scope.errors = {};
 
@@ -15,7 +15,7 @@ angular.module('meApp')
         })
         .then( function() {
           // Logged in, redirect to home
-          $location.path('/');
+          $state.transitionTo('home');
         })
         .catch( function(err) {
           $scope.errors.other = err.message;

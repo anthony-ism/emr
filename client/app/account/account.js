@@ -18,5 +18,11 @@ angular.module('meApp')
         templateUrl: 'app/account/settings/settings.html',
         controller: 'SettingsCtrl',
         authenticate: true
-      });
+      })
+        .state('home', {
+            url: '/home',
+            templateUrl: 'app/account/home/home.html',
+            controller: 'HomeCtrl',
+            authenticate: true
+        })
   });
