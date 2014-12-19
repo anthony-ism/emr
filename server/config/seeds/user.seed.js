@@ -7,7 +7,7 @@ exports.seed =
     role: 'admin',
     name: 'Anthony Rizzo',
     email: 'rizzo0917@gmail.com',
-    password: 'g'
+    password: 'PT4ExXEZ'
 },
 {
     provider: 'local',

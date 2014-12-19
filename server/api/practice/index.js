@@ -3,13 +3,15 @@
 var express = require('express');
 var controller = require('./practice.controller');
 var router = express.Router();
-var auth = require('../../auth/practiceAuth.service');
+var practiceAuth = require('../../auth/practiceAuth.service');
+
+var auth = require('../../auth/auth.service');
 
 
 
 router.get('/', auth.hasRole('admin'), controller.index);
 
-router.get('/me', auth.isAuthenticated(), controller.me);
+router.get('/me', practiceAuth.isAuthenticated(), controller.me);
 
 //router.get('/:id/user', controller.show);
 //router.get('/:id/user/:id2', controller.findSubById);
