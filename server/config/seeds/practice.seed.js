@@ -27,14 +27,14 @@ exports.seed =  [{
         }]
     }],
     user: [{
-        provider: 'local',
+        provider: 'practice',
         role: 'user',
         name: 'Test User',
         email: 'test@test.com',
         password: 'test'
     },
         {
-            provider: 'local',
+            provider: 'practice',
             role: 'admin',
             name: 'Admin',
             email: 'admin@admin.com',
@@ -68,14 +68,14 @@ exports.seed =  [{
         }]
     }],
     user: [{
-        provider: 'local',
+        provider: 'practice',
         name: 'Dankys',
         email: 'jpdanks@gmail.com',
         password: 'dankys',
         role: 'user'
     },
         {
-            provider: 'local',
+            provider: 'practice',
             role: 'admin',
             name: 'Admin',
             email: 'kingtut@gmail.com',

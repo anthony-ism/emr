@@ -13,6 +13,7 @@ exports.index = function(req, res) {
 exports.me = function(req, res, next) {
     var userId = req.user._id;
     Practice.findOne({'user._id': userId}, '-salt -hashedPassword', function(err, user) { // don't ever give out the password or salt
+        //TO DO Return user sans salt and hashedpasswords
         if (err) return next(err);
         if (!user) return res.json(401);
         res.json(user);

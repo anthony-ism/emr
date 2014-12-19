@@ -3,7 +3,7 @@
 var express = require('express');
 var controller = require('./practice.controller');
 var router = express.Router();
-var auth = require('../../auth/auth.service');
+var auth = require('../../auth/practiceAuth.service');
 
 
 
