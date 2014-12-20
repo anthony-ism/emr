@@ -2,6 +2,8 @@
 
 var _ = require('lodash');
 var Practice = require('./practice.model');
+var auth = require('../../auth/practiceAuth.service');
+
 // Get list of practices
 exports.index = function(req, res) {
     Practice.find(function (err, practices) {
@@ -42,11 +44,11 @@ exports.findSubById = function(req, res) {
         if(!practice) { return res.send(404); }
         var params = originalUrl.split("/");
         try {
-            if (practice[params[4]] !== undefined && params.length == 6)
+            if (practice[params[4]] !== undefined && params.length === 6)
             {
                 return res.json(practice[params[4]].id(params[5]));
             }
-            else if (params.length == 7)
+            else if (params.length === 7)
             {
 
                 if (practice[params[4]].id(params[5])[params[6]] !== undefined)
@@ -57,7 +59,7 @@ exports.findSubById = function(req, res) {
                     return res.json(practice[params[4]].id(params[5])[subParams[0]][subParams[1]]);
                 }
             }
-            else if (practice[params[4]].id(params[5])[params[6]] !== undefined && params.length == 8)
+            else if (practice[params[4]].id(params[5])[params[6]] !== undefined && params.length === 8)
             {
                 return res.json(practice[params[4]].id(params[5])[params[6]].id(params[7]));
             }
@@ -87,9 +89,9 @@ exports.createSub = function(req, res) {
         var params = originalUrl.split("/");
 
 
-        if (practice[params[4]] !== undefined && params.length == 5)
+        if (practice[params[4]] !== undefined && params.length === 5)
             practice[params[4]].push(req.body);
-        else if (params.length == 7)
+        else if (params.length === 7)
         {
             if (practice[params[4]].id(params[5])[params[6]] !== undefined)
                 practice[params[4]].id(params[5])[params[6]].push(req.body);
@@ -117,9 +119,9 @@ exports.updateSubById = function(req, res) {
         if (err) { return handleError(res, err); }
         if(!practice) { return res.send(404); }
         var params = originalUrl.split("/");
-        if (practice[params[4]] !== undefined && params.length == 6)
+        if (practice[params[4]] !== undefined && params.length === 6)
             object = practice[params[4]].id(params[5]);
-        else if (practice[params[4]].id(params[5])[params[6]] !== undefined && params.length == 8)
+        else if (practice[params[4]].id(params[5])[params[6]] !== undefined && params.length === 8)
             object = practice[params[4]].id(params[5])[params[6]].id(params[7]);
 
         for (var key in req.body)
@@ -172,9 +174,9 @@ exports.destroySub = function(req, res) {
         if (err) { return handleError(res, err); }
         if(!practice) { return res.send(404); }
         var params = originalUrl.split("/");
-        if (practice[params[4]] !== undefined && params.length == 6)
+        if (practice[params[4]] !== undefined && params.length === 6)
             object = practice[params[4]].pull({_id: params[5]});
-        else if (practice[params[4]].id(params[5])[params[6]] !== undefined && params.length == 8)
+        else if (practice[params[4]].id(params[5])[params[6]] !== undefined && params.length === 8)
             object = practice[params[4]].id(params[5])[params[6]].pull({_id: params[7]});
 
         practice.save(function (err) {
@@ -183,6 +185,96 @@ exports.destroySub = function(req, res) {
         });
 
     });
+};
+
+/**
+ * Creates a new user
+ */
+exports.createUser = function (req, res, next) {
+    var originalUrl = req.originalUrl;
+    var email = req.body.email;
+
+
+    Practice.findOne({'user.email': email}, function(err, practice) {
+        if (practice === null )
+        {
+            Practice.findById(req.params.id, function (err, practice) {
+                if (err) {
+                    return handleError(res, err);
+                }
+                if (!practice) {
+                    return res.send(404);
+                }
+                var params = originalUrl.split("/");
+                if (practice[params[4]] !== undefined && params.length === 5)
+                    practice[params[4]].push(req.body);
+
+
+                var newUser = practice[params[4]][practice[params[4]].length - 1];
+                newUser.provider = 'practice';
+                practice.save(function (err) {
+                    if (err) { return handleError(res, err); }
+                    for (var i =0; i < practice.user.length; i++)
+                    {
+                        if (practice.user[i].email === email)
+                        {
+                            var token = auth.signToken(practice.user[i]._id, practice.user[i].email);
+                            res.json({ token: token });
+                        }
+                    }
+                });
+            });
+        }
+        else
+        {
+            var err = {};
+            err.message = "Email Already Exists";
+            return handleError(res, err);
+        }
+    });
+
+    /**
+     * Change a users password
+     */
+    exports.changePassword = function(req, res, next) {
+        var userId = req.user._id;
+        var oldPass = String(req.body.oldPassword);
+        var newPass = String(req.body.newPassword);
+
+        Practice.findOne({'user._id': userId}, function (err, practice) {
+
+            for (var i =0; i < practice.user.length; i++)
+            {
+                if (practice.user[i].email === email)
+                {
+                    if (practice.user[i].authenticate(oldPass)) {
+                        practice.user[i].password = newPass;
+                        practice.save(function (err) {
+                            if (err) {
+                                return handleError(res, err);
+                            }
+                        });o
+                    }
+                    else
+                    {
+                        res.send(403);
+
+                    }
+                }
+            }
+
+            if(user.authenticate(oldPass)) {
+                user.password = newPass;
+                user.save(function(err) {
+                    if (err) return validationError(res, err);
+                    res.send(200);
+                });
+            } else {
+                res.send(403);
+            }
+        });
+    };
+
 };
 
 function handleError(res, err) {

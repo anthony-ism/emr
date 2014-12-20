@@ -13,8 +13,9 @@ router.get('/', auth.hasRole('admin'), controller.index);
 
 router.get('/me', practiceAuth.isAuthenticated(), controller.me);
 
-//router.get('/:id/user', controller.show);
-//router.get('/:id/user/:id2', controller.findSubById);
+router.get('/:id/user', controller.show);
+router.get('/:id/user/:id2', controller.findSubById);
+
 router.get('/:id', controller.show);
 router.get('/:id/facility', controller.show);
 router.get('/:id/facility/:id2', controller.findSubById);
@@ -23,14 +24,14 @@ router.get('/:id/facility/:id2/hours/:id3', controller.findSubById);
 router.get('/:id/facility/:id2/contact.phone', controller.findSubById);
 
 router.post('/', controller.create);
-//router.post('/:id/user', controller.createSub);
+router.post('/:id/user', controller.createUser);
 router.post('/:id/facility', controller.createSub);
 router.post('/:id/facility/:id2/hours', controller.createSub);
 router.post('/:id/facility/:id2/contact.phone', controller.createSub);
 
 
 router.put('/:id', controller.update);
-//router.put('/:id/user/:id2', controller.updateSubById);
+//router.put('/:id/user/:id2/password', controller.changePassword);
 router.put('/:id/facility/:id2', controller.updateSubById);
 router.put('/:id/facility/:id2/hours/:id3', controller.updateSubById);
 

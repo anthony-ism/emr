@@ -603,7 +603,7 @@ module.exports = function (grunt) {
       return grunt.task.run([
         'env:all',
         'env:test',
-        'mochaTest'
+        'mocha_istanbul:coverage'
       ]);
     }
 
@@ -664,4 +664,17 @@ module.exports = function (grunt) {
     'test',
     'build'
   ]);
+
+    grunt.config.set('mocha_istanbul', {
+        coverage: {
+            src: 'server', // the folder, not the files
+            options: {
+                coverageFolder: 'coverage',
+                mask: '**/*.spec.js',
+                root: 'server/'
+            }
+        }
+    });
+
+    grunt.loadNpmTasks('grunt-mocha-istanbul')
 };
