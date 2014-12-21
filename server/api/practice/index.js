@@ -8,21 +8,19 @@ var practiceAuth = require('../../auth/practiceAuth.service');
 var auth = require('../../auth/auth.service');
 
 
-
+//Authed By Admin
 router.get('/', auth.hasRole('admin'), controller.index);
+router.get('/:id/user', auth.hasRole('admin'), controller.show);
+router.get('/:id/user/:id2', auth.hasRole('admin'), controller.findSubById);
+router.get('/:id', auth.hasRole('admin'), controller.show);
+router.get('/:id/facility', auth.hasRole('admin'), controller.show);
+router.get('/:id/facility/:id2', auth.hasRole('admin'), controller.findSubById);
+router.get('/:id/facility/:id2/hours', auth.hasRole('admin'), controller.findSubById);
+router.get('/:id/facility/:id2/hours/:id3', auth.hasRole('admin'), controller.findSubById);
+router.get('/:id/facility/:id2/contact.phone', auth.hasRole('admin'), controller.findSubById);
+router.get('/:id/facility/:id2/contact.phone/:id3', auth.hasRole('admin'), controller.findSubById);
 
-router.get('/me', practiceAuth.isAuthenticated(), controller.me);
-
-router.get('/:id/user', controller.show);
-router.get('/:id/user/:id2', controller.findSubById);
-
-router.get('/:id', controller.show);
-router.get('/:id/facility', controller.show);
-router.get('/:id/facility/:id2', controller.findSubById);
-router.get('/:id/facility/:id2/hours', controller.findSubById);
-router.get('/:id/facility/:id2/hours/:id3', controller.findSubById);
-router.get('/:id/facility/:id2/contact.phone', controller.findSubById);
-
+///
 router.post('/', controller.create);
 router.post('/:id/user', controller.createUser);
 router.post('/:id/facility', controller.createSub);
@@ -55,6 +53,10 @@ router.put('/:id/user/:id2/password', auth.isAuthenticated(), userController.cha
 router.get('/:id/user/:id2', auth.isAuthenticated(), userController.show);
 */
 router.post('/:id/user', userController.createSub);
+
+
+//Auth By Practice User
+router.get('/me', practiceAuth.isAuthenticated(), controller.me);
 
 
 module.exports = router;

@@ -603,7 +603,6 @@ module.exports = function (grunt) {
       return grunt.task.run([
         'env:all',
         'env:test',
-        'watch',
         'mocha_istanbul:coverage'
       ]);
     }

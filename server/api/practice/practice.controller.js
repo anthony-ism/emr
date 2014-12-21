@@ -59,9 +59,15 @@ exports.findSubById = function(req, res) {
                     return res.json(practice[params[4]].id(params[5])[subParams[0]][subParams[1]]);
                 }
             }
-            else if (practice[params[4]].id(params[5])[params[6]] !== undefined && params.length === 8)
+            else if (params.length === 8)
             {
-                return res.json(practice[params[4]].id(params[5])[params[6]].id(params[7]));
+                if (practice[params[4]].id(params[5])[params[6]] !== undefined)
+                    return res.json(practice[params[4]].id(params[5])[params[6]].id(params[7]));
+                else
+                {
+                    var subParams = params[6].split(".");
+                    return res.json(practice[params[4]].id(params[5])[subParams[0]][subParams[1]].id(params[7]));
+                }
             }
         } catch(err)
         {
