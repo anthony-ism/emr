@@ -58,6 +58,7 @@ describe('GET /api/practices', function() {
     var facilityID;
     var hoursID;
     var contactPhoneID;
+    var practiceToken;
 
     it("should log an admin in", function (done) {
         var user = {email: 'rizzo0917@gmail.com', password: 'PT4ExXEZ'};
@@ -72,6 +73,35 @@ describe('GET /api/practices', function() {
             });
     });
 
+
+
+    it("should create a new practice", function(done) {
+        var agent = request.agent(app);
+        var name = "New Practice";
+        agent
+            .post("/api/practices")
+            .send({name: name})
+            .set({'Authorization': 'Bearer ' + token})
+            .expect(200)
+            .end(function (err, res) {
+                expect(res.body.name).to.be.equal(name);
+                done();
+            });
+    });
+
+    it("should return 401", function(done) {
+        var agent = request.agent(app);
+        var name = "New Practice";
+        agent
+            .post("/api/practices")
+            .send({name: name})
+            .expect(401)
+            .end(function (err, res) {
+                expect(res.status).to.be.equal(401);
+                done();
+            });
+    });
+
     it("should list all practices", function(done) {
         var agent = request.agent(app);
         agent
@@ -81,10 +111,9 @@ describe('GET /api/practices', function() {
             .end(function (err, res) {
 
                 practiceID = res.body[0]._id;
-                expect(res.body.length).to.be.equal(2);
+                expect(res.body.length).to.be.equal(3);
                 done();
             });
-
     });
 
     it("should return 401", function(done) {
@@ -122,6 +151,73 @@ describe('GET /api/practices', function() {
             });
     });
 
+    it("should say user exists for this new user", function(done) {
+        var agent = request.agent(app);
+        agent
+            .post("/api/practices/" + practiceID + "/user")
+            .send({ provider: 'practice',
+                    role: 'user',
+                    name: 'Test User',
+                    email: 'test@test.com',
+                    password: 'test'})
+            .set({'Authorization': 'Bearer ' + token})
+            .expect(500)
+            .end(function (err, res) {
+                expect(res.error.status).to.be.equal(500);
+                done();
+            });
+    });
+
+
+    it("should say user needs a password for this new user", function(done) {
+        var agent = request.agent(app);
+        agent
+            .post("/api/practices/" + practiceID + "/user")
+            .send({ provider: 'practice',
+                role: 'user',
+                name: 'Test User',
+                email: 'tes2t@test.com'})
+            .set({'Authorization': 'Bearer ' + token})
+            .expect(500)
+            .end(function (err, res) {
+                expect(res.error.status).to.be.equal(500);
+                done();
+            });
+    });
+
+    it("should return 401", function(done) {
+        var agent = request.agent(app);
+        agent
+            .post("/api/practices/" + practiceID + "/user")
+            .send({ provider: 'practice',
+                role: 'user',
+                name: 'Test User',
+                email: 'tes2t@test.com',
+                password: 'password'})
+            .expect(401)
+            .end(function (err, res) {
+                expect(res.error.status).to.be.equal(401);
+                done();
+            });
+    });
+
+    it("should create a single user for a particular practice", function(done) {
+        var agent = request.agent(app);
+        agent
+            .post("/api/practices/" + practiceID + "/user")
+            .send({ provider: 'practice',
+                role: 'user',
+                name: 'Test User',
+                email: 'tes2t@test.com',
+                password: 'password'})
+            .set({'Authorization': 'Bearer ' + token})
+            .expect(200)
+            .end(function (err, res) {
+                practiceToken = res.body.token
+                expect(res.body.token).to.not.be.undefined;
+                done();
+            });
+    });
 
     it("should list users", function(done) {
         var agent = request.agent(app);
@@ -131,7 +227,7 @@ describe('GET /api/practices', function() {
             .expect(200)
             .end(function (err, res) {
                 userID = res.body[0]._id;
-                expect(res.body.length).to.be.equal(2);
+                expect(res.body.length).to.be.equal(3);
                 done();
             });
     });
@@ -172,6 +268,33 @@ describe('GET /api/practices', function() {
 
 
 
+    it("should create a facility", function(done) {
+        var agent = request.agent(app);
+        var name = "Seattle Office";
+        agent
+            .post("/api/practices/" + practiceID + "/facility")
+            .set({'Authorization': 'Bearer ' + token})
+            .send({name: name})
+            .expect(200)
+            .end(function (err, res) {
+                expect(res.body[1].name).to.be.equal(name);
+                done();
+            });
+    });
+
+    it("should return 401", function(done) {
+        var agent = request.agent(app);
+        var name = "Seattle Office";
+        agent
+            .post("/api/practices/" + practiceID + "/facility")
+            .send({name: name})
+            .expect(401)
+            .end(function (err, res) {
+                expect(res.status).to.be.equal(401);
+                done();
+            });
+    });
+
     it("should list facilities", function(done) {
         var agent = request.agent(app);
         agent
@@ -180,7 +303,7 @@ describe('GET /api/practices', function() {
             .expect(200)
             .end(function (err, res) {
                 facilityID = res.body[0]._id;
-                expect(res.body.length).to.be.equal(1);
+                expect(res.body.length).to.be.equal(2);
                 done();
             });
     });
@@ -221,6 +344,34 @@ describe('GET /api/practices', function() {
     });
 
 
+    it("should create a single facility hours", function(done) {
+        var agent = request.agent(app);
+        agent
+            .post("/api/practices/" + practiceID + "/facility/" + facilityID + "/hours")
+            .send({ day: "Friday",
+                    start: 8,
+                    end: 17})
+            .set({'Authorization': 'Bearer ' + token})
+            .expect(200)
+            .end(function (err, res) {
+                expect(res.body.hours[1].day).to.be.equal("Friday");
+                done();
+            });
+    });
+
+    it("should return 401", function(done) {
+        var agent = request.agent(app);
+        agent
+            .post("/api/practices/" + practiceID + "/facility/" + facilityID + "/hours")
+            .send({ day: "Friday",
+                start: 8,
+                end: 17})
+            .expect(401)
+            .end(function (err, res) {
+                expect(res.status).to.be.equal(401);
+                done();
+            });
+    });
 
     it("should list a single facility hours", function(done) {
         var agent = request.agent(app);
@@ -230,7 +381,7 @@ describe('GET /api/practices', function() {
             .expect(200)
             .end(function (err, res) {
                 hoursID = res.body[0]._id;
-                expect(res.body.length).to.be.equal(1);
+                expect(res.body.length).to.be.equal(2);
                 done();
             });
     });
@@ -270,6 +421,33 @@ describe('GET /api/practices', function() {
             });
     });
 
+    //router.post('/:id/facility/:id2/contact.phone', controller.createSub);
+
+    it("should create a single facility contact.phone", function(done) {
+        var agent = request.agent(app);
+        agent
+            .post("/api/practices/" + practiceID + "/facility/" + facilityID + "/contact.phone")
+            .send({description: "Office", number: "2123321112"})
+            .set({'Authorization': 'Bearer ' + token})
+            .expect(200)
+            .end(function (err, res) {
+                expect(res.body.contact.phone[1].description).to.be.equal("Office");
+                done();
+            });
+    });
+
+    it("should return 401", function(done) {
+        var agent = request.agent(app);
+        agent
+            .post("/api/practices/" + practiceID + "/facility/" + facilityID + "/contact.phone")
+            .send({description: "Office", number: "2123321112"})
+            .expect(401)
+            .end(function (err, res) {
+                expect(res.status).to.be.equal(401);
+                done();
+            });
+    });
+
     it("should list a single facility contact.phone", function(done) {
         var agent = request.agent(app);
         agent
@@ -278,7 +456,7 @@ describe('GET /api/practices', function() {
             .expect(200)
             .end(function (err, res) {
                 contactPhoneID = res.body[0]._id;
-                expect(res.body.length).to.be.equal(1);
+                expect(res.body.length).to.be.equal(2);
                 done();
             });
     });
