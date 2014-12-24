@@ -26,7 +26,6 @@ function isAuthenticated() {
     // Attach user to request
     .use(function(req, res, next) {
       Practice.findOne({'user._id': req.user._id}, function(err, practice) {
-        console.log("cars!");
         if (err) return next(err);
         if (!practice) return res.send(401);
 

@@ -48,7 +48,7 @@ exports.userMe = function(req, res, next) {
 };
 
 
-var _show = function(res, err, practice, originalUrl)
+var _show = function(req, res, err, practice)
 {
     if (err) {
         return handleError(res, err);
@@ -56,6 +56,11 @@ var _show = function(res, err, practice, originalUrl)
     if (!practice) {
         return res.send(404);
     }
+
+    var originalUrl = req.originalUrl;
+    if (req.user._id !== undefined)
+        originalUrl = originalUrl.replace("/api/practices/", "/api/practices/" + practice._id + "/");
+
     var params = originalUrl.split("/");
     if (practice._doc[params[4]] !== undefined)
         return res.json(practice._doc[params[4]]);
@@ -65,23 +70,25 @@ var _show = function(res, err, practice, originalUrl)
 
 // Get a single practice or any of its subdocuments by property name
 exports.show = function(req, res) {
-    var originalUrl = req.originalUrl;
-    if (req.user._id == undefined)
-        Practice.findById(req.params.id, function (err, practice) { _show(res, err, practice, originalUrl) });
+    if (req.user._id === undefined)
+        Practice.findById(req.params.id, function (err, practice) { _show(req, res, err, practice) });
     else {
-        var userId = req.user._id;
-        console.log(originalUrl);
-        Practice.findOne({'user._id': userId}, '-salt -hashedPassword', function (err, practice) {
-            originalUrl = originalUrl.replace("/api/practices/", "/api/practices/" + practice._id + "/");
-            _show(res, err, practice, originalUrl)
+        Practice.findOne({'user._id': req.user._id}, '-salt -hashedPassword', function (err, practice) {
+            _show(req, res, err, practice)
         });
     }
 };
 
-var _findBySubId = function(res, err, practice, originalUrl)
+var _findBySubId = function(req, res, err, practice)
 {
+
     if(err) { return handleError(res, err); }
     if(!practice) { return res.send(404); }
+
+    var originalUrl = req.originalUrl;
+    if (req.user._id !== undefined)
+        originalUrl = originalUrl.replace("/api/practices/", "/api/practices/" + practice._id + "/");
+
     var params = originalUrl.split("/");
     try {
         if (practice[params[4]] !== undefined && params.length === 6)
@@ -119,15 +126,10 @@ var _findBySubId = function(res, err, practice, originalUrl)
 
 // Get a single practice subdocument by id
 exports.findSubById = function(req, res) {
-    var originalUrl = req.originalUrl;
     if (req.user._id == undefined)
-        Practice.findById(req.params.id, function (err, practice) { _findBySubId(res, err, practice, originalUrl) });
+        Practice.findById(req.params.id, function (err, practice) { _findBySubId(req, res, err, practice) });
     else {
-        var userId = req.user._id;
-        Practice.findOne({'user._id': userId}, '-salt -hashedPassword', function (err, practice) {
-            originalUrl = originalUrl.replace("/api/practices/", "/api/practices/" + practice._id + "/");
-            _findBySubId(res, err, practice, originalUrl)
-        });
+        Practice.findOne({'user._id': req.user._id}, '-salt -hashedPassword', function (err, practice) { _findBySubId(req, res, err, practice) });
     }
 };
 
