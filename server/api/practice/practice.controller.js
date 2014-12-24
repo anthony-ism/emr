@@ -14,67 +14,121 @@ exports.index = function(req, res) {
 
 exports.me = function(req, res, next) {
     var userId = req.user._id;
-    Practice.findOne({'user._id': userId}, '-salt -hashedPassword', function(err, user) { // don't ever give out the password or salt
-        //TO DO Return user sans salt and hashedpasswords
+    Practice.findOne({'user._id': userId}, '-salt -hashedPassword', function(err, practice) { // don't ever give out the password or salt
+        if (!practice) return res.json(401);
+        for (var i =0; i < practice.user.length; i++)
+        {
+            practice.user[i].hashedPassword = null;
+            practice.user[i].salt = null;
+        }
         if (err) return next(err);
-        if (!user) return res.json(401);
-        res.json(user);
+        res.json(practice);
     });
 };
+
+
+exports.userMe = function(req, res, next) {
+    var userId = req.user._id;
+    var userEmail = req.user.email;
+    Practice.findOne({'user._id': userId}, '-salt -hashedPassword', function(err, practice) { // don't ever give out the password or salt
+        if (!practice) return res.json(401);
+        for (var i =0; i < practice.user.length; i++)
+        {
+            if (practice.user[i].email == userEmail)
+            {
+                practice.user[i].hashedPassword = null;
+                practice.user[i].salt = null;
+                res.json(practice.user[i]);
+            }
+
+        }
+        if (err) return next(err);
+
+    });
+};
+
+
+var _show = function(res, err, practice, originalUrl)
+{
+    if (err) {
+        return handleError(res, err);
+    }
+    if (!practice) {
+        return res.send(404);
+    }
+    var params = originalUrl.split("/");
+    if (practice._doc[params[4]] !== undefined)
+        return res.json(practice._doc[params[4]]);
+    return res.json(practice);
+}
+
 
 // Get a single practice or any of its subdocuments by property name
 exports.show = function(req, res) {
     var originalUrl = req.originalUrl;
-    Practice.findById(req.params.id, function (err, practice) {
-        if(err) { return handleError(res, err); }
-        if(!practice) { return res.send(404); }
-        var params = originalUrl.split("/");
-        if (practice._doc[params[4]] !== undefined)
-            return res.json(practice._doc[params[4]]);
-        return res.json(practice);
-  });
+    if (req.user._id == undefined)
+        Practice.findById(req.params.id, function (err, practice) { _show(res, err, practice, originalUrl) });
+    else {
+        var userId = req.user._id;
+        console.log(originalUrl);
+        Practice.findOne({'user._id': userId}, '-salt -hashedPassword', function (err, practice) {
+            originalUrl = originalUrl.replace("/api/practices/", "/api/practices/" + practice._id + "/");
+            _show(res, err, practice, originalUrl)
+        });
+    }
 };
+
+var _findBySubId = function(res, err, practice, originalUrl)
+{
+    if(err) { return handleError(res, err); }
+    if(!practice) { return res.send(404); }
+    var params = originalUrl.split("/");
+    try {
+        if (practice[params[4]] !== undefined && params.length === 6)
+        {
+            return res.json(practice[params[4]].id(params[5]));
+        }
+        else if (params.length === 7)
+        {
+
+            if (practice[params[4]].id(params[5])[params[6]] !== undefined)
+                return res.json(practice[params[4]].id(params[5])[params[6]]);
+            else
+            {
+                var subParams = params[6].split(".");
+                return res.json(practice[params[4]].id(params[5])[subParams[0]][subParams[1]]);
+            }
+        }
+        else if (params.length === 8)
+        {
+            if (practice[params[4]].id(params[5])[params[6]] !== undefined)
+                return res.json(practice[params[4]].id(params[5])[params[6]].id(params[7]));
+            else
+            {
+                var subParams = params[6].split(".");
+                return res.json(practice[params[4]].id(params[5])[subParams[0]][subParams[1]].id(params[7]));
+            }
+        }
+    } catch(err)
+    {
+        console.log(err);
+        return res.send(500);
+    }
+}
 
 
 // Get a single practice subdocument by id
 exports.findSubById = function(req, res) {
     var originalUrl = req.originalUrl;
-    Practice.findById(req.params.id, function (err, practice) {
-        if(err) { return handleError(res, err); }
-        if(!practice) { return res.send(404); }
-        var params = originalUrl.split("/");
-        try {
-            if (practice[params[4]] !== undefined && params.length === 6)
-            {
-                return res.json(practice[params[4]].id(params[5]));
-            }
-            else if (params.length === 7)
-            {
-
-                if (practice[params[4]].id(params[5])[params[6]] !== undefined)
-                    return res.json(practice[params[4]].id(params[5])[params[6]]);
-                else
-                {
-                    var subParams = params[6].split(".");
-                    return res.json(practice[params[4]].id(params[5])[subParams[0]][subParams[1]]);
-                }
-            }
-            else if (params.length === 8)
-            {
-                if (practice[params[4]].id(params[5])[params[6]] !== undefined)
-                    return res.json(practice[params[4]].id(params[5])[params[6]].id(params[7]));
-                else
-                {
-                    var subParams = params[6].split(".");
-                    return res.json(practice[params[4]].id(params[5])[subParams[0]][subParams[1]].id(params[7]));
-                }
-            }
-        } catch(err)
-        {
-            console.log(err);
-            return res.send(500);
-        }
-    });
+    if (req.user._id == undefined)
+        Practice.findById(req.params.id, function (err, practice) { _findBySubId(res, err, practice, originalUrl) });
+    else {
+        var userId = req.user._id;
+        Practice.findOne({'user._id': userId}, '-salt -hashedPassword', function (err, practice) {
+            originalUrl = originalUrl.replace("/api/practices/", "/api/practices/" + practice._id + "/");
+            _findBySubId(res, err, practice, originalUrl)
+        });
+    }
 };
 
 

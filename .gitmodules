@@ -1,0 +1,3 @@
+[submodule "vagrant_env"]
+	path = vagrant_env
+	url = https://github.com/anthony-ism/vagrant_env
