@@ -48,8 +48,9 @@ exports.userMe = function(req, res, next) {
 };
 
 
-var _show = function(req, res, err, practice, admin)
+var _show = function(req, res, err, practice)
 {
+    console.log(err);
     if (err) {
         return handleError(res, err);
     }
@@ -58,13 +59,17 @@ var _show = function(req, res, err, practice, admin)
     }
 
     var originalUrl = req.originalUrl;
-    if (!admin)
-        originalUrl = originalUrl.replace("/api/practices/", "/api/practices/" + practice._id + "/");
+
 
     var params = originalUrl.split("/");
+
     if (practice._doc[params[4]] !== undefined)
         return res.json(practice._doc[params[4]]);
-    return res.json(practice);
+    else if (practice._doc[params[3]] !== undefined)
+            return res.json(practice._doc[params[3]]);
+    else
+        return res.json(practice);
+
 }
 
 
@@ -75,11 +80,14 @@ exports.showAdmin = function(req, res) {
     });
 }
 
-exports.show = function(req, res) {
-    Practice.findOne({'user._id': req.user._id}, '-salt -hashedPassword', function (err, practice) {
-        _show(req, res, err, practice, false)
-    });
-};
+    /*
+    exports.show = function(req, res) {
+        console.log("werid!!");
+        Practice.findOne({'user._id': req.user._id}, '-salt -hashedPassword', function (err, practice) {
+            _show(req, res, err, practice, false)
+        });
+    };
+    */
 
 var _findBySubId = function(req, res, err, practice)
 {

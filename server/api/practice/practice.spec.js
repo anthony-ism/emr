@@ -47,6 +47,7 @@ describe('GET /api/practices', function() {
     var hoursID;
     var contactPhoneID;
     var practiceToken;
+    var dankysPracticeToken;
 
     it("should log an admin in", function (done) {
         var user = {email: 'rizzo0917@gmail.com', password: 'PT4ExXEZ'};
@@ -61,7 +62,7 @@ describe('GET /api/practices', function() {
             });
     });
 
-    it("should log an practice user in", function (done) {
+    it("should log rza's practice user in", function (done) {
         var user = {email: 'test@test.com', password: 'test'};
         request(app)
             .post("/auth/practice")
@@ -69,6 +70,18 @@ describe('GET /api/practices', function() {
             .expect(200)
             .end(function (err, res) {
                 practiceToken = res.body.token;
+                done();
+            });
+    });
+
+    it("should log dankys practice user in", function (done) {
+        var user = {email: 'jpdanks@gmail.com', password: 'dankys'};
+        request(app)
+            .post("/auth/practice")
+            .send(user)
+            .expect(200)
+            .end(function (err, res) {
+                dankysPracticeToken = res.body.token;
                 done();
             });
     });
@@ -81,6 +94,18 @@ describe('GET /api/practices', function() {
             .expect(200)
             .end(function (err, res) {
                 expect(res.body.name).to.be.equal("Rza's Practice");
+                done();
+            });
+    });
+
+    it("should list practice info", function(done) {
+        var agent = request.agent(app);
+        agent
+            .get("/api/practices/me")
+            .set({'Authorization': 'Bearer ' + dankysPracticeToken})
+            .expect(200)
+            .end(function (err, res) {
+                expect(res.body.name).to.be.equal("Danky's Office");
                 done();
             });
     });
@@ -106,6 +131,18 @@ describe('GET /api/practices', function() {
             .expect(200)
             .end(function (err, res) {
                 expect(res.body.name).to.be.equal('Test User');
+                done();
+            });
+    });
+
+    it("should list user info", function(done) {
+        var agent = request.agent(app);
+        agent
+            .get("/api/practices/user/me")
+            .set({'Authorization': 'Bearer ' + dankysPracticeToken})
+            .expect(200)
+            .end(function (err, res) {
+                expect(res.body.name).to.be.equal('Dankys');
                 done();
             });
     });
@@ -343,6 +380,8 @@ describe('GET /api/practices', function() {
             })
         });
 
+
+
         describe('GET /api/practices/:id/facility', function() {
             it("should create a facility", function(done) {
                 var agent = request.agent(app);
@@ -371,6 +410,8 @@ describe('GET /api/practices', function() {
                     });
             });
 
+
+
             it("should list facilities", function(done) {
                 var agent = request.agent(app);
                 agent
@@ -394,6 +435,24 @@ describe('GET /api/practices', function() {
                         done();
                     });
             });
+        });
+
+
+        describe('GET /api/practices/facility', function() {
+
+            it("should list facilities", function(done) {
+                var agent = request.agent(app);
+                agent
+                    .get("/api/practices/facility")
+                    .set({'Authorization': 'Bearer ' + practiceToken})
+                    .expect(200)
+                    .end(function (err, res) {
+                        expect(res.body.length).to.be.equal(2);
+                        facilityID = res.body[0]._id;
+                        done();
+                    });
+            });
+
         });
     });
 

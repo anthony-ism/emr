@@ -13,14 +13,16 @@ router.get('/', auth.hasRole('admin'), controller.index);
     /** GET **/
 router.get('/me', practiceAuth.isAuthenticated(), controller.me);
 router.get('/user/me', practiceAuth.isAuthenticated(), controller.userMe);
-router.get('/user', practiceAuth.isAuthenticated(), controller.show);
-router.get('/facility', practiceAuth.isAuthenticated(), controller.show);
-router.get('/facility/:id2', practiceAuth.isAuthenticated(), controller.findSubById);
-router.get('/facility/:id2/hours', practiceAuth.isAuthenticated(), controller.findSubById);
-router.get('/facility/:id2/hours/:id3', practiceAuth.isAuthenticated(), controller.findSubById);
-router.get('/facility/:id2/contact.phone', practiceAuth.isAuthenticated(), controller.findSubById);
-router.get('/facility/:id2/contact.phone/:id3', practiceAuth.isAuthenticated(), controller.findSubById);
-router.get('/:id/user', auth.hasRole('admin'), controller.show);
+    /*
+        router.get('/user', practiceAuth.isAuthenticated(), controller.show);
+        router.get('/facility', practiceAuth.isAuthenticated(), controller.show);
+        router.get('/facility/:id2', practiceAuth.isAuthenticated(), controller.findSubById);
+        router.get('/facility/:id2/hours', practiceAuth.isAuthenticated(), controller.findSubById);
+        router.get('/facility/:id2/hours/:id3', practiceAuth.isAuthenticated(), controller.findSubById);
+        router.get('/facility/:id2/contact.phone', practiceAuth.isAuthenticated(), controller.findSubById);
+        router.get('/facility/:id2/contact.phone/:id3', practiceAuth.isAuthenticated(), controller.findSubById);
+    */
+router.get('/:id/user', auth.hasRole('admin'), controller.showAdmin);
 router.get('/:id/user/:id2', auth.hasRole('admin'), controller.findSubById);
 router.get('/:id', auth.hasRole('admin'), controller.showAdmin);
 router.get('/:id/facility', auth.hasRole('admin'), controller.showAdmin);
