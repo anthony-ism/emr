@@ -5,6 +5,7 @@ var router = express.Router();
 var practiceAuth = require('../../auth/practiceAuth.service');
 var auth = require('../../auth/auth.service');
 var userController = require('./user.controller');
+
 /** Authenticated By Admin **/
     /** GET **/
 router.get('/', auth.hasRole('admin'), controller.index);
@@ -21,8 +22,8 @@ router.get('/facility/:id2/contact.phone', practiceAuth.isAuthenticated(), contr
 router.get('/facility/:id2/contact.phone/:id3', practiceAuth.isAuthenticated(), controller.findSubById);
 router.get('/:id/user', auth.hasRole('admin'), controller.show);
 router.get('/:id/user/:id2', auth.hasRole('admin'), controller.findSubById);
-router.get('/:id', auth.hasRole('admin'), controller.show);
-router.get('/:id/facility', auth.hasRole('admin'), controller.show);
+router.get('/:id', auth.hasRole('admin'), controller.showAdmin);
+router.get('/:id/facility', auth.hasRole('admin'), controller.showAdmin);
 router.get('/:id/facility/:id2', auth.hasRole('admin'), controller.findSubById);
 router.get('/:id/facility/:id2/hours', auth.hasRole('admin'), controller.findSubById);
 router.get('/:id/facility/:id2/hours/:id3', auth.hasRole('admin'), controller.findSubById);

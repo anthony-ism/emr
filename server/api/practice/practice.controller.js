@@ -48,7 +48,7 @@ exports.userMe = function(req, res, next) {
 };
 
 
-var _show = function(req, res, err, practice)
+var _show = function(req, res, err, practice, admin)
 {
     if (err) {
         return handleError(res, err);
@@ -58,7 +58,7 @@ var _show = function(req, res, err, practice)
     }
 
     var originalUrl = req.originalUrl;
-    if (req.user._id !== undefined)
+    if (!admin)
         originalUrl = originalUrl.replace("/api/practices/", "/api/practices/" + practice._id + "/");
 
     var params = originalUrl.split("/");
@@ -68,15 +68,17 @@ var _show = function(req, res, err, practice)
 }
 
 
-// Get a single practice or any of its subdocuments by property name
+
+exports.showAdmin = function(req, res) {
+    Practice.findById(req.params.id, function (err, practice) {
+        _show(req, res, err, practice, true)
+    });
+}
+
 exports.show = function(req, res) {
-    if (req.user._id === undefined)
-        Practice.findById(req.params.id, function (err, practice) { _show(req, res, err, practice) });
-    else {
-        Practice.findOne({'user._id': req.user._id}, '-salt -hashedPassword', function (err, practice) {
-            _show(req, res, err, practice)
-        });
-    }
+    Practice.findOne({'user._id': req.user._id}, '-salt -hashedPassword', function (err, practice) {
+        _show(req, res, err, practice, false)
+    });
 };
 
 var _findBySubId = function(req, res, err, practice)

@@ -57,7 +57,6 @@ describe('GET /api/practices', function() {
             .expect(200)
             .end(function (err, res) {
                 token = res.body.token;
-                console.log("here -- ");
                 done();
             });
     });
