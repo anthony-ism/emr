@@ -58,8 +58,17 @@ var _show = function(req, res, err, practice)
     }
 
     var originalUrl = req.originalUrl;
+
+
     var params = originalUrl.split("/");
-    return res.json(practice[params[3]]);
+
+    if (practice._doc[params[4]] !== undefined)
+        return res.json(practice._doc[params[4]]);
+    else if (practice._doc[params[3]] !== undefined)
+            return res.json(practice._doc[params[3]]);
+    else
+        return res.json(practice);
+
 }
 
 
@@ -70,13 +79,14 @@ exports.showAdmin = function(req, res) {
     });
 }
 
-
+    /*
     exports.show = function(req, res) {
+        console.log("werid!!");
         Practice.findOne({'user._id': req.user._id}, '-salt -hashedPassword', function (err, practice) {
             _show(req, res, err, practice, false)
         });
     };
-
+    */
 
 var _findBySubId = function(req, res, err, practice)
 {
