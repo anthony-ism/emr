@@ -18,11 +18,20 @@ var auth = require('../../auth/auth.service');
 
     /** POST **/
     router.post('/facility', practiceAuth.isAuthenticated(), controller.createSub);
+    router.post('/facility/:id2/hours', practiceAuth.isAuthenticated(), controller.createSub);
+    router.post('/facility/:id2/contact.phone', practiceAuth.isAuthenticated(), controller.createSub);
+
 
     /** PUT **/
-    router.put('/facility/:id', practiceAuth.isAuthenticated(), controller.updateSubById);
+    router.put('/facility/:id2', practiceAuth.isAuthenticated(), controller.updateSubById);
+    router.put('/facility/:id2/hours/:id3', practiceAuth.isAuthenticated(), controller.updateSubById);
+    router.put('/facility/:id2/contact.phone/:id3', practiceAuth.isAuthenticated(), controller.updateSubById);
+
 
     /** DELETE **/
-    router.delete('/facility/:id', practiceAuth.isAuthenticated(), controller.destroySub);
+    router.delete('/facility/:id2', practiceAuth.isAuthenticated(), controller.destroySub);
+    router.delete('/facility/:id2/hours/:id3', practiceAuth.isAuthenticated(), controller.destroySub);
+    router.delete('/facility/:id2/contact.phone/:id3', practiceAuth.isAuthenticated(), controller.destroySub);
+
 
 module.exports = router;

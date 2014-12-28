@@ -4,34 +4,23 @@ var _ = require('lodash');
 var Practice = require('./practice.model');
 var auth = require('../../auth/practiceAuth.service');
 
-// Get list of practices
-exports.index = function(req, res) {
-    Practice.find(function (err, practices) {
-        if(err) { return handleError(res, err); }
-        return res.json(200, practices);
-  });
-};
 
+//Return Logged in Practice
 exports.me = function(req, res, next) {
-    var userId = req.user._id;
-    Practice.findOne({'user._id': userId}, '-salt -hashedPassword', function(err, practice) { // don't ever give out the password or salt
-        if (!practice) return res.json(401);
+    getPractice(req,res, function(req, res, err, practice) {
         for (var i =0; i < practice.user.length; i++)
         {
             practice.user[i].hashedPassword = null;
             practice.user[i].salt = null;
         }
-        if (err) return next(err);
         res.json(practice);
     });
 };
 
-
+//Return Logged In user
 exports.userMe = function(req, res, next) {
-    var userId = req.user._id;
     var userEmail = req.user.email;
-    Practice.findOne({'user._id': userId}, '-salt -hashedPassword', function(err, practice) { // don't ever give out the password or salt
-        if (!practice) return res.json(401);
+    getPractice(req,res, function(req, res, err, practice) {
         for (var i =0; i < practice.user.length; i++)
         {
             if (practice.user[i].email == userEmail)
@@ -40,10 +29,7 @@ exports.userMe = function(req, res, next) {
                 practice.user[i].salt = null;
                 res.json(practice.user[i]);
             }
-
         }
-        if (err) return next(err);
-
     });
 };
 
@@ -57,24 +43,13 @@ var getPractice = function(req, res, next)
     });
 }
 
-
-
-
-
-    exports.show = function(req, res) {
-        getPractice(req,res, function(req, res, err, practice) {
-            if (err) {
-                return handleError(res, err);
-            }
-            if (!practice) {
-                return res.send(404);
-            }
-
-            var originalUrl = req.originalUrl;
-            var params = originalUrl.split("/");
-            return res.json(practice[params[3]]);
-        });
-    };
+exports.show = function(req, res) {
+    getPractice(req,res, function(req, res, err, practice) {
+        var originalUrl = req.originalUrl;
+        var params = originalUrl.split("/");
+        return res.json(practice[params[3]]);
+    });
+};
 
 
 
@@ -167,6 +142,7 @@ exports.destroySub = function(req, res) {
         });
     });
 };
+
 
 /**
  * Creates a new user
