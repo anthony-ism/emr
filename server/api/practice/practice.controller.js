@@ -51,6 +51,8 @@ exports.userMe = function(req, res, next) {
 var getPractice = function(req, res, next)
 {
     Practice.findOne({'user._id': req.user._id}, '-salt -hashedPassword', function (err, practice) {
+        if (err) { return handleError(res, err); }
+        if (!practice) { return res.send(404); }
         next(req, res, err, practice)
     });
 }
@@ -76,12 +78,8 @@ var getPractice = function(req, res, next)
 
 
 
-// Get a single practice subdocument by id
 exports.findSubById = function(req, res) {
     getPractice(req, res, function(req, res, err, practice) {
-
-        if(err) { return handleError(res, err); }
-        if(!practice) { return res.send(404); }
         var params = req.originalUrl.split("/");
         var obj = eval(generateEval(params));
         return res.json(obj);
@@ -90,13 +88,6 @@ exports.findSubById = function(req, res) {
 };
 
 
-// Creates a new practice in the DB.
-exports.create = function(req, res) {
-  Practice.create(req.body, function(err, practice) {
-    if(err) { return handleError(res, err); }
-    return res.json(201, practice);
-  });
-};
 
 
 var generateSubParams = function(params)
@@ -125,49 +116,35 @@ var generateEval = function(params)
             else if (params[i].indexOf(".") == -1)
                 obj += "['" + params[i] + "']";
             else
-                obj += "['" + generateSubParams(params[i]) + "']";
+                obj += generateSubParams(params[i]);
         }
     }
-    console.log(obj);
     return obj;
 }
 
 exports.createSub = function(req, res) {
-
     getPractice(req, res, function(req, res, err, practice){
-        if (err) { return handleError(res, err); }
-        if (!practice) { return res.send(404); }
         var params = req.originalUrl.split("/");
         var obj = eval(generateEval(params));
-
         if (obj !== undefined)
             obj.push(req.body);
-
         practice.save(function (err) {
             if (err) { return handleError(res, err); }
             return res.json(200, obj[obj.length -1]);
         });
     });
-
-
 };
 
 
-// Updates an existing practice in the DB.
 exports.updateSubById = function(req, res) {
-
     getPractice(req, res, function(req, res, err, practice){
-        if (err) { return handleError(res, err); }
-        if (!practice) { return res.send(404); }
         var params = req.originalUrl.split("/");
         var obj = eval(generateEval(params));
-
         for (var key in req.body)
         {
             if (obj[key] !== undefined)
                 obj.set(key, req.body[key]);
         }
-
         practice.save(function (err) {
             if (err) { return handleError(res, err); }
             return res.json(200, obj);
@@ -179,23 +156,15 @@ exports.updateSubById = function(req, res) {
 
 // Deletes a practice from the DB.
 exports.destroySub = function(req, res) {
-    var originalUrl = req.originalUrl;
-    var object;
-    if(req.body._id) { delete req.body._id; }
-    Practice.findById(req.params.id, function (err, practice) {
-        if (err) { return handleError(res, err); }
-        if(!practice) { return res.send(404); }
-        var params = originalUrl.split("/");
-        if (practice[params[4]] !== undefined && params.length === 6)
-            object = practice[params[4]].pull({_id: params[5]});
-        else if (practice[params[4]].id(params[5])[params[6]] !== undefined && params.length === 8)
-            object = practice[params[4]].id(params[5])[params[6]].pull({_id: params[7]});
-
+    getPractice(req, res, function(req, res, err, practice){
+        var params = req.originalUrl.split("/");
+        var _id = params.pop();
+        var obj = eval(generateEval(params));
+        obj.pull({"_id": _id});
         practice.save(function (err) {
             if (err) { return handleError(res, err); }
-            return res.json(200, object);
+            return res.json(200, obj);
         });
-
     });
 };
 

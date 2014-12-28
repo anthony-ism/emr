@@ -23,4 +23,6 @@ var auth = require('../../auth/auth.service');
     router.put('/facility/:id', practiceAuth.isAuthenticated(), controller.updateSubById);
 
     /** DELETE **/
-    module.exports = router;
+    router.delete('/facility/:id', practiceAuth.isAuthenticated(), controller.destroySub);
+
+module.exports = router;

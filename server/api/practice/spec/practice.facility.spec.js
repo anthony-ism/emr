@@ -94,12 +94,56 @@ describe('GET /api/practice', function() {
             var name = "Down Town Office II";
             agent
                 .post("/api/practice/facility")
-                .set({'Authorization': 'Bearer ' + practiceID})
+                .set({'Authorization': 'Bearer ' + practiceToken})
                 .send({name: name})
                 .expect(200)
                 .end(function (err, res) {
-                    console.log(res.body);
-                    expect(res.body[1].name).to.be.equal(name);
+                    facilityID = res.body._id;
+                    expect(res.body.name).to.be.equal(name);
+                    done();
+                });
+        });
+
+        it("should return 401", function (done) {
+            var agent = request.agent(app);
+            var name = "Down Town Office II";
+            agent
+                .post("/api/practice/facility")
+                .set({'Authorization': 'Bearer ' + token})
+                .send({name: name})
+                .expect(401)
+                .end(function (err, res) {
+                    expect(res.error.status).to.be.equal(401);
+                    done();
+                });
+        });
+    });
+
+    describe('PUT /api/practice/facility', function() {
+        it("should update previously added facility", function (done) {
+            var agent = request.agent(app);
+            var name = "Down Town Office III";
+            agent
+                .put("/api/practice/facility/" + facilityID)
+                .set({'Authorization': 'Bearer ' + practiceToken})
+                .send({name: name})
+                .expect(200)
+                .end(function (err, res) {
+                    expect(res.body.name).to.be.equal(name);
+                    done();
+                });
+        });
+
+        it("return 401", function (done) {
+            var agent = request.agent(app);
+            var name = "Down Town Office III";
+            agent
+                .put("/api/practice/facility/" + facilityID)
+                .set({'Authorization': 'Bearer ' + token})
+                .send({name: name})
+                .expect(401)
+                .end(function (err, res) {
+                    expect(res.error.status).to.be.equal(401);
                     done();
                 });
         });
@@ -116,7 +160,7 @@ describe('GET /api/practice', function() {
                 .expect(200)
                 .end(function (err, res) {
                     expect(res.body[0].name).to.be.equal("Down town office");
-                    expect(res.body[1].name).to.be.equal("Down Town Office II");
+                    expect(res.body[1].name).to.be.equal("Down Town Office III");
                     facilityID = res.body[0]._id;
                     done();
                 });
@@ -147,6 +191,17 @@ describe('GET /api/practice', function() {
         });
     });
 
-
-
+    describe('DELETE /api/practice/facility', function() {
+        it("should remove facility", function (done) {
+            var agent = request.agent(app);
+            agent
+                .delete("/api/practice/facility/" + facilityID)
+                .set({'Authorization': 'Bearer ' + practiceToken})
+                .expect(200)
+                .end(function (err, res) {
+                    expect(res.body.length).to.be.equal(1);
+                    done();
+                });
+        });
+    });
 });
