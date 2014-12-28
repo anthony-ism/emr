@@ -17,8 +17,10 @@ var auth = require('../../auth/auth.service');
     router.get('/facility/:id2/contact.phone/:id3', practiceAuth.isAuthenticated(), controller.findSubById);
 
     /** POST **/
+    router.post('/facility', practiceAuth.isAuthenticated(), controller.createSub);
 
     /** PUT **/
+    router.put('/facility/:id', practiceAuth.isAuthenticated(), controller.updateSubById);
 
     /** DELETE **/
     module.exports = router;

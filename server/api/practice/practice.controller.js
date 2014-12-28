@@ -48,88 +48,45 @@ exports.userMe = function(req, res, next) {
 };
 
 
-var _show = function(req, res, err, practice)
+var getPractice = function(req, res, next)
 {
-    if (err) {
-        return handleError(res, err);
-    }
-    if (!practice) {
-        return res.send(404);
-    }
-
-    var originalUrl = req.originalUrl;
-    var params = originalUrl.split("/");
-    return res.json(practice[params[3]]);
-}
-
-
-
-exports.showAdmin = function(req, res) {
-    Practice.findById(req.params.id, function (err, practice) {
-        _show(req, res, err, practice, true)
+    Practice.findOne({'user._id': req.user._id}, '-salt -hashedPassword', function (err, practice) {
+        next(req, res, err, practice)
     });
 }
 
 
+
+
+
     exports.show = function(req, res) {
-        Practice.findOne({'user._id': req.user._id}, '-salt -hashedPassword', function (err, practice) {
-            _show(req, res, err, practice, false)
+        getPractice(req,res, function(req, res, err, practice) {
+            if (err) {
+                return handleError(res, err);
+            }
+            if (!practice) {
+                return res.send(404);
+            }
+
+            var originalUrl = req.originalUrl;
+            var params = originalUrl.split("/");
+            return res.json(practice[params[3]]);
         });
     };
 
 
-var _findBySubId = function(req, res, err, practice)
-{
-
-    if(err) { return handleError(res, err); }
-    if(!practice) { return res.send(404); }
-
-    var originalUrl = req.originalUrl;
-    if (req.user._id !== undefined)
-        originalUrl = originalUrl.replace("/api/practices/", "/api/practices/" + practice._id + "/");
-
-    var params = originalUrl.split("/");
-    try {
-        if (practice[params[4]] !== undefined && params.length === 6)
-        {
-            return res.json(practice[params[4]].id(params[5]));
-        }
-        else if (params.length === 7)
-        {
-
-            if (practice[params[4]].id(params[5])[params[6]] !== undefined)
-                return res.json(practice[params[4]].id(params[5])[params[6]]);
-            else
-            {
-                var subParams = params[6].split(".");
-                return res.json(practice[params[4]].id(params[5])[subParams[0]][subParams[1]]);
-            }
-        }
-        else if (params.length === 8)
-        {
-            if (practice[params[4]].id(params[5])[params[6]] !== undefined)
-                return res.json(practice[params[4]].id(params[5])[params[6]].id(params[7]));
-            else
-            {
-                var subParams = params[6].split(".");
-                return res.json(practice[params[4]].id(params[5])[subParams[0]][subParams[1]].id(params[7]));
-            }
-        }
-    } catch(err)
-    {
-        console.log(err);
-        return res.send(500);
-    }
-}
-
 
 // Get a single practice subdocument by id
 exports.findSubById = function(req, res) {
-    if (req.user._id == undefined)
-        Practice.findById(req.params.id, function (err, practice) { _findBySubId(req, res, err, practice) });
-    else {
-        Practice.findOne({'user._id': req.user._id}, '-salt -hashedPassword', function (err, practice) { _findBySubId(req, res, err, practice) });
-    }
+    getPractice(req, res, function(req, res, err, practice) {
+
+        if(err) { return handleError(res, err); }
+        if(!practice) { return res.send(404); }
+        var params = req.originalUrl.split("/");
+        var obj = eval(generateEval(params));
+        return res.json(obj);
+
+    })
 };
 
 
@@ -142,89 +99,83 @@ exports.create = function(req, res) {
 };
 
 
+var generateSubParams = function(params)
+{
+    var result = "";
+    var subParams = params.split(".");
+    for (var i = 0; i < subParams.length; i++)
+        result += "['" + subParams[i] + "']";
+    return result;
+}
+
+var generateEval = function(params)
+{
+    var mongodb = require("mongodb"),
+        objectid = mongodb.BSONPure.ObjectID;
+
+    var obj = "";
+    for (var i = 2; i < params.length; i++)
+    {
+        if (objectid.isValid(params[i]))
+            obj += ".id('" + params[i] + "')";
+        else
+        {
+            if (obj.length == 0)
+                obj = params[i]
+            else if (params[i].indexOf(".") == -1)
+                obj += "['" + params[i] + "']";
+            else
+                obj += "['" + generateSubParams(params[i]) + "']";
+        }
+    }
+    console.log(obj);
+    return obj;
+}
+
 exports.createSub = function(req, res) {
-    var originalUrl = req.originalUrl;
-    Practice.findById(req.params.id, function (err, practice) {
+
+    getPractice(req, res, function(req, res, err, practice){
         if (err) { return handleError(res, err); }
         if (!practice) { return res.send(404); }
-        var params = originalUrl.split("/");
+        var params = req.originalUrl.split("/");
+        var obj = eval(generateEval(params));
 
-
-        if (practice[params[4]] !== undefined && params.length === 5)
-            practice[params[4]].push(req.body);
-        else if (params.length === 7)
-        {
-            if (practice[params[4]].id(params[5])[params[6]] !== undefined)
-                practice[params[4]].id(params[5])[params[6]].push(req.body);
-            else
-            {
-                var subParams = params[6].split(".");
-                practice[params[4]].id(params[5])[subParams[0]][subParams[1]].push(req.body);
-            }
-        }
+        if (obj !== undefined)
+            obj.push(req.body);
 
         practice.save(function (err) {
             if (err) { return handleError(res, err); }
-            return res.json(200, practice[params[4]]);
+            return res.json(200, obj[obj.length -1]);
         });
     });
+
+
 };
 
 
 // Updates an existing practice in the DB.
 exports.updateSubById = function(req, res) {
-    var originalUrl = req.originalUrl;
-    var object;
-    if(req.body._id) { delete req.body._id; }
-    Practice.findById(req.params.id, function (err, practice) {
+
+    getPractice(req, res, function(req, res, err, practice){
         if (err) { return handleError(res, err); }
-        if(!practice) { return res.send(404); }
-        var params = originalUrl.split("/");
-        if (practice[params[4]] !== undefined && params.length === 6)
-            object = practice[params[4]].id(params[5]);
-        else if (practice[params[4]].id(params[5])[params[6]] !== undefined && params.length === 8)
-            object = practice[params[4]].id(params[5])[params[6]].id(params[7]);
+        if (!practice) { return res.send(404); }
+        var params = req.originalUrl.split("/");
+        var obj = eval(generateEval(params));
 
         for (var key in req.body)
         {
-            if (object[key] !== undefined)
-                object.set(key, req.body[key]);
+            if (obj[key] !== undefined)
+                obj.set(key, req.body[key]);
         }
 
         practice.save(function (err) {
             if (err) { return handleError(res, err); }
-            return res.json(200, object);
+            return res.json(200, obj);
         });
     });
 };
 
 
-// Updates an existing practice in the DB.
-exports.update = function(req, res) {
-    var originalUrl = req.originalUrl;
-    if(req.body._id) { delete req.body._id; }
-    Practice.findById(req.params.id, function (err, practice) {
-        if (err) { return handleError(res, err); }
-        if(!practice) { return res.send(404); }
-        var updated = _.merge(practice, req.body);
-        updated.save(function (err) {
-            if (err) { return handleError(res, err); }
-                return res.json(200, practice);
-            });
-        });
-};
-
-// Deletes a practice from the DB.
-exports.destroy = function(req, res) {
-  Practice.findById(req.params.id, function (err, practice) {
-    if(err) { return handleError(res, err); }
-    if(!practice) { return res.send(404); }
-    practice.remove(function(err) {
-      if(err) { return handleError(res, err); }
-      return res.send(204);
-    });
-  });
-};
 
 // Deletes a practice from the DB.
 exports.destroySub = function(req, res) {

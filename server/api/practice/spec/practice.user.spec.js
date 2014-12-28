@@ -1,7 +1,7 @@
 'use strict';
 
 var should = require('should');
-var app = require('../../app');
+var app = require('../../../app');
 var request = require('supertest');
 var mongoose = require('mongoose');
 var mockgoose = require('mockgoose');
@@ -39,7 +39,7 @@ eval(fs.readFileSync(filename)+'');
 */
 
 
-describe('GET /api/practices', function() {
+describe('GET /api/practice', function() {
     /* These Variables need to be populated often */
     var token;
     var practiceToken;
@@ -88,47 +88,12 @@ describe('GET /api/practices', function() {
             });
     });
 
-    it("should list practice info", function(done) {
-        var agent = request.agent(app);
-        agent
-            .get("/api/practices/me")
-            .set({'Authorization': 'Bearer ' + practiceToken})
-            .expect(200)
-            .end(function (err, res) {
-                expect(res.body.name).to.be.equal("Rza's Practice");
-                done();
-            });
-    });
-
-    it("should list practice info", function(done) {
-        var agent = request.agent(app);
-        agent
-            .get("/api/practices/me")
-            .set({'Authorization': 'Bearer ' + dankysPracticeToken})
-            .expect(200)
-            .end(function (err, res) {
-                expect(res.body.name).to.be.equal("Danky's Office");
-                done();
-            });
-    });
-
-    it("should return 401", function(done) {
-        var agent = request.agent(app);
-        agent
-            .get("/api/practices/me")
-            .set({'Authorization': 'Bearer ' + token})
-            .expect(500)
-            .end(function (err, res) {
-                expect(res.error.status).to.be.equal(401);
-                done();
-            });
-    });
 
 
     it("should list user info", function(done) {
         var agent = request.agent(app);
         agent
-            .get("/api/practices/user/me")
+            .get("/api/practice/user/me")
             .set({'Authorization': 'Bearer ' + practiceToken})
             .expect(200)
             .end(function (err, res) {
@@ -140,7 +105,7 @@ describe('GET /api/practices', function() {
     it("should list user info", function(done) {
         var agent = request.agent(app);
         agent
-            .get("/api/practices/user/me")
+            .get("/api/practice/user/me")
             .set({'Authorization': 'Bearer ' + dankysPracticeToken})
             .expect(200)
             .end(function (err, res) {
@@ -152,7 +117,7 @@ describe('GET /api/practices', function() {
     it("should return 401", function(done) {
         var agent = request.agent(app);
         agent
-            .get("/api/practices/user/me")
+            .get("/api/practice/user/me")
             .set({'Authorization': 'Bearer ' + token})
             .expect(500)
             .end(function (err, res) {
@@ -161,11 +126,11 @@ describe('GET /api/practices', function() {
             });
     });
 
-    describe('GET /api/practices/facility', function() {
+    describe('GET /api/practice/facility', function() {
         it("should list facilities", function(done) {
             var agent = request.agent(app);
             agent
-                .get("/api/practices/facility")
+                .get("/api/practice/facility")
                 .set({'Authorization': 'Bearer ' + practiceToken})
                 .expect(200)
                 .end(function (err, res) {
