@@ -38,18 +38,19 @@ var filename = __dirname + "/../../config/seed.js";
 eval(fs.readFileSync(filename)+'');
 */
 
+var token;
+var practiceToken;
+var dankysPracticeToken;
+
+var practiceID;
+var userID;
+var facilityID;
+var hoursID;
+var contactPhoneID;
 
 describe('GET /api/practice', function() {
     /* These Variables need to be populated often */
-    var token;
-    var practiceToken;
-    var dankysPracticeToken;
 
-    var practiceID;
-    var userID;
-    var facilityID;
-    var hoursID;
-    var contactPhoneID;
 
     it("should log an admin in", function (done) {
         var user = {email: 'rizzo0917@gmail.com', password: 'PT4ExXEZ'};
@@ -89,8 +90,7 @@ describe('GET /api/practice', function() {
     });
 
 
-
-    it("should list user info", function(done) {
+    it("should list user info", function (done) {
         var agent = request.agent(app);
         agent
             .get("/api/practice/user/me")
@@ -102,7 +102,7 @@ describe('GET /api/practice', function() {
             });
     });
 
-    it("should list user info", function(done) {
+    it("should list user info", function (done) {
         var agent = request.agent(app);
         agent
             .get("/api/practice/user/me")
@@ -114,7 +114,7 @@ describe('GET /api/practice', function() {
             });
     });
 
-    it("should return 401", function(done) {
+    it("should return 401", function (done) {
         var agent = request.agent(app);
         agent
             .get("/api/practice/user/me")
@@ -125,19 +125,128 @@ describe('GET /api/practice', function() {
                 done();
             });
     });
+});
+describe('POST /api/practice/user', function() {
+    it("should say user exists for this new user", function (done) {
+        var agent = request.agent(app);
+        agent
+            .post("/api/practice/user")
+            .send({
+                provider: 'practice',
+                role: 'user',
+                name: 'Test User',
+                email: 'test@test.com',
+                password: 'test'
+            })
+            .set({'Authorization': 'Bearer ' + practiceToken})
+            .expect(500)
+            .end(function (err, res) {
+                expect(res.error.status).to.be.equal(500);
+                done();
+            });
+    });
 
-    describe('GET /api/practice/facility', function() {
-        it("should list facilities", function(done) {
-            var agent = request.agent(app);
-            agent
-                .get("/api/practice/facility")
-                .set({'Authorization': 'Bearer ' + practiceToken})
-                .expect(200)
-                .end(function (err, res) {
-                    expect(res.body.length).to.be.equal(1);
-                    facilityID = res.body[0]._id;
-                    done();
-                });
-        });
+    it("should say user needs a password for this new user", function (done) {
+        var agent = request.agent(app);
+        agent
+            .post("/api/practice/user")
+            .send({
+                provider: 'practice',
+                role: 'user',
+                name: 'Test User',
+                email: 'tes2t@test.com'
+            })
+            .set({'Authorization': 'Bearer ' + practiceToken})
+            .expect(500)
+            .end(function (err, res) {
+                expect(res.error.status).to.be.equal(500);
+                done();
+            });
+    });
+
+    it("should return 401", function (done) {
+        var agent = request.agent(app);
+        agent
+            .post("/api/practice/user")
+            .send({
+                provider: 'practice',
+                role: 'user',
+                name: 'Test User',
+                email: 'tes2t@test.com',
+                password: 'password'
+            })
+            .expect(401)
+            .end(function (err, res) {
+                expect(res.error.status).to.be.equal(401);
+                done();
+            });
+    });
+
+    it("should create a single user", function (done) {
+        var agent = request.agent(app);
+        agent
+            .post("/api/practice/user")
+            .send({
+                provider: 'practice',
+                role: 'user',
+                name: 'Test User',
+                email: 'tes2t@test.com',
+                password: 'password'
+            })
+            .set({'Authorization': 'Bearer ' + practiceToken})
+            .expect(200)
+            .end(function (err, res) {
+                practiceToken = res.body.token;
+                expect(res.body.token).to.not.be.undefined;
+                done();
+            });
     });
 });
+
+describe('GET /api/practice/user', function() {
+    it("should list users", function (done) {
+        var agent = request.agent(app);
+        agent
+            .get("/api/practice/user")
+            .set({'Authorization': 'Bearer ' + practiceToken})
+            .expect(200)
+            .end(function (err, res) {
+                userID = res.body[0]._id;
+                expect(res.body.length).to.be.equal(3);
+                done();
+            });
+    });
+});
+
+
+describe('PUT /api/practice/user/:id/password', function() {
+    it("should change a users password", function (done) {
+        var agent = request.agent(app);
+        agent
+            .put("/api/practice/user/" + userID + "/password")
+            .send({oldPassword: "text", newPassword: "test2"})
+            .set({'Authorization': 'Bearer ' + practiceToken})
+            .expect(200)
+            .end(function (err, res) {
+                console.log(res);
+                done();
+            });
+    });
+});
+
+/*
+describe('PUT /api/practice/user/:id/password', function() {
+    it("should fail to change a users password", function (done) {
+        var agent = request.agent(app);
+        agent
+            .put("/api/practice/user/" + userID + "/password")
+            .send({oldPassword: "text", newPassword: "test2"})
+            .set({'Authorization': 'Bearer ' + practiceToken})
+            .expect(200)
+            .end(function (err, res) {
+                console.log(res);
+                done();
+            });
+    });
+});
+    */

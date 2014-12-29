@@ -324,7 +324,7 @@ exports.createUser = function (req, res, next) {
                             if (err) {
                                 return handleError(res, err);
                             }
-                        });o
+                        });
                     }
                     else
                     {

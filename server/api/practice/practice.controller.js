@@ -5,38 +5,41 @@ var Practice = require('./practice.model');
 var auth = require('../../auth/practiceAuth.service');
 
 
+var getUser = function(practice, email)
+{
+    for (var i =0; i < practice.user.length; i++)
+    {
+        if (practice.user[i].email == email)
+            return practice.user[i];
+    }
+}
+
 //Return Logged in Practice
 exports.me = function(req, res, next) {
     getPractice(req,res, function(req, res, err, practice) {
-        for (var i =0; i < practice.user.length; i++)
-        {
-            practice.user[i].hashedPassword = null;
-            practice.user[i].salt = null;
-        }
         res.json(practice);
     });
 };
 
 //Return Logged In user
 exports.userMe = function(req, res, next) {
-    var userEmail = req.user.email;
     getPractice(req,res, function(req, res, err, practice) {
-        for (var i =0; i < practice.user.length; i++)
-        {
-            if (practice.user[i].email == userEmail)
-            {
-                practice.user[i].hashedPassword = null;
-                practice.user[i].salt = null;
-                res.json(practice.user[i]);
-            }
-        }
+        res.json(getUser(practice, req.user.email));
     });
 };
 
+var getPracticeWithHash = function(req, res, next)
+{
+    Practice.findOne({'user._id': req.user._id}, function (err, practice) {
+        if (err) { return handleError(res, err); }
+        if (!practice) { return res.send(404); }
+        next(req, res, err, practice)
+    });
+}
 
 var getPractice = function(req, res, next)
 {
-    Practice.findOne({'user._id': req.user._id}, '-salt -hashedPassword', function (err, practice) {
+    Practice.findOne({'user._id': req.user._id}, '-user.salt -user.hashedPassword', function (err, practice) {
         if (err) { return handleError(res, err); }
         if (!practice) { return res.send(404); }
         next(req, res, err, practice)
@@ -148,90 +151,48 @@ exports.destroySub = function(req, res) {
  * Creates a new user
  */
 exports.createUser = function (req, res, next) {
-    var originalUrl = req.originalUrl;
-    var email = req.body.email;
-
-
-    Practice.findOne({'user.email': email}, function(err, practice) {
-        if (practice === null )
-        {
-            Practice.findById(req.params.id, function (err, practice) {
-                if (err) {
-                    return handleError(res, err);
-                }
-                if (!practice) {
-                    return res.send(404);
-                }
-                var params = originalUrl.split("/");
-                if (practice[params[4]] !== undefined && params.length === 5)
-                    practice[params[4]].push(req.body);
-
-
-                var newUser = practice[params[4]][practice[params[4]].length - 1];
+    Practice.findOne({'user.email': req.body.email}, function (err, practice) {
+        if (practice === null) {
+            getPractice(req, res, function (req, res, err, practice) {
+                var params = req.originalUrl.split("/");
+                var obj = eval(generateEval(params));
+                obj.push(req.body);
+                var newUser = obj[obj.length - 1];
                 newUser.provider = 'practice';
                 practice.save(function (err) {
                     if (err) { return handleError(res, err); }
-                    for (var i =0; i < practice.user.length; i++)
-                    {
-                        if (practice.user[i].email === email)
-                        {
-                            var token = auth.signToken(practice.user[i]._id, practice.user[i].email);
-                            res.json({ token: token });
-                        }
-                    }
+                    var user = getUser(practice, req.body.email);
+                    var token = auth.signToken(user._id, user.email);
+                    res.json({token: token});
                 });
             });
         }
-        else
-        {
+        else {
             var err = {};
             err.message = "Email Already Exists";
             return handleError(res, err);
         }
     });
+};
 
-    /**
-     * Change a users password
-     */
-    exports.changePassword = function(req, res, next) {
-        var userId = req.user._id;
-        var oldPass = String(req.body.oldPassword);
-        var newPass = String(req.body.newPassword);
+/**
+ * Change a users password
+ */
+exports.changePassword = function(req, res, next) {
+    getPracticeWithHash(req, res, function (req, res, err, practice) {
+        var user = getUser(practice, req.user.email);
+        if (user.authenticate(String(req.body.oldPassword))) {
+            user.password = String(req.body.newPassword);
+            practice.save(function (err) {
+                if (err) { return handleError(res, err) };
+                var token = auth.signToken(user._id, user.email);
+                res.json({token: token});
 
-        Practice.findOne({'user._id': userId}, function (err, practice) {
-
-            for (var i =0; i < practice.user.length; i++)
-            {
-                if (practice.user[i].email === email)
-                {
-                    if (practice.user[i].authenticate(oldPass)) {
-                        practice.user[i].password = newPass;
-                        practice.save(function (err) {
-                            if (err) {
-                                return handleError(res, err);
-                            }
-                        });o
-                    }
-                    else
-                    {
-                        res.send(403);
-
-                    }
-                }
-            }
-
-            if(user.authenticate(oldPass)) {
-                user.password = newPass;
-                user.save(function(err) {
-                    if (err) return validationError(res, err);
-                    res.send(200);
-                });
-            } else {
-                res.send(403);
-            }
-        });
-    };
-
+            });
+        }
+        else
+            res.send(403);
+    });
 };
 
 function handleError(res, err) {
