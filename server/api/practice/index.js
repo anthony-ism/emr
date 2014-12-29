@@ -24,7 +24,7 @@ var auth = require('../../auth/auth.service');
 
 
     /** PUT **/
-    router.put('/user/:id2/password', practiceAuth.isAuthenticated(), controller.changePassword);
+    router.put('/user/password', practiceAuth.isAuthenticated(), controller.changePassword);
     router.put('/facility/:id2', practiceAuth.isAuthenticated(), controller.updateSubById);
     router.put('/facility/:id2/hours/:id3', practiceAuth.isAuthenticated(), controller.updateSubById);
     router.put('/facility/:id2/contact.phone/:id3', practiceAuth.isAuthenticated(), controller.updateSubById);

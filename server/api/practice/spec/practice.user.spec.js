@@ -219,34 +219,44 @@ describe('GET /api/practice/user', function() {
 });
 
 
-describe('PUT /api/practice/user/:id/password', function() {
-    it("should change a users password", function (done) {
+describe('PUT /api/practice/user/password', function() {
+    it("should not change a users password", function (done) {
         var agent = request.agent(app);
         agent
-            .put("/api/practice/user/" + userID + "/password")
+            .put("/api/practice/user/password")
             .send({oldPassword: "text", newPassword: "test2"})
             .set({'Authorization': 'Bearer ' + practiceToken})
-            .expect(200)
+            .expect(403)
             .end(function (err, res) {
-                console.log(res);
+                expect(res.error.status).to.be.equal(403);
                 done();
             });
     });
 });
 
-/*
-describe('PUT /api/practice/user/:id/password', function() {
-    it("should fail to change a users password", function (done) {
+describe('PUT /api/practice/user/password', function() {
+    it("should change a users password", function (done) {
         var agent = request.agent(app);
         agent
-            .put("/api/practice/user/" + userID + "/password")
-            .send({oldPassword: "text", newPassword: "test2"})
+            .put("/api/practice/user/password")
+            .send({oldPassword: "password", newPassword: "test2"})
             .set({'Authorization': 'Bearer ' + practiceToken})
             .expect(200)
             .end(function (err, res) {
-                console.log(res);
+                done();
+            });
+    });
+
+    it("should log rza's practice user in", function (done) {
+        var user = {email: 'tes2t@test.com', password: 'test2'};
+        request(app)
+            .post("/auth/practice")
+            .send(user)
+            .expect(200)
+            .end(function (err, res) {
+                practiceToken = res.body.token;
                 done();
             });
     });
 });
-    */
+
