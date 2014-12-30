@@ -73,7 +73,7 @@ exports.index = function(req, res) {
 //
 //
 //
-//exports.showAdmin = function(req, res) {
+//exports.showadmin = function(req, res) {
 //    Practice.findById(req.params.id, function (err, practice) {
 //        _show(req, res, err, practice, true)
 //    });

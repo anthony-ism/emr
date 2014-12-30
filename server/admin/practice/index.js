@@ -9,10 +9,10 @@ var userController = require('./admin.user.controller');
     /** GET **/
 router.get('/', auth.hasRole('admin'), controller.index);
 /*
-router.get('/:id/user', auth.hasRole('admin'), controller.showAdmin);
+router.get('/:id/user', auth.hasRole('admin'), controller.showadmin);
 router.get('/:id/user/:id2', auth.hasRole('admin'), controller.findSubById);
-router.get('/:id', auth.hasRole('admin'), controller.showAdmin);
-router.get('/:id/facility', auth.hasRole('admin'), controller.showAdmin);
+router.get('/:id', auth.hasRole('admin'), controller.showadmin);
+router.get('/:id/facility', auth.hasRole('admin'), controller.showadmin);
 router.get('/:id/facility/:id2', auth.hasRole('admin'), controller.findSubById);
 router.get('/:id/facility/:id2/hours', auth.hasRole('admin'), controller.findSubById);
 router.get('/:id/facility/:id2/hours/:id3', auth.hasRole('admin'), controller.findSubById);

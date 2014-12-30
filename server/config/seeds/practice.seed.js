@@ -1,7 +1,8 @@
 /**
  * Created by anthony on 12/12/14.
  */
-exports.seed =  [{
+
+exports.Practice =  [{
     name: "Rza's Practice",
     facility: [{
         name: "Down town office",

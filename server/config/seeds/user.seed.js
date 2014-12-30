@@ -1,8 +1,9 @@
 /**
  * Created by anthony on 12/12/14.
  */
-exports.seed =
-{
+
+exports.User =
+[{
     provider: 'local',
     role: 'admin',
     name: 'Anthony Rizzo',
@@ -29,4 +30,4 @@ exports.seed =
     name: 'Mindo Lee',
     email: 'mindo3228@hotmail.com',
     password: 'EQTeeVTM'
-}
+}]

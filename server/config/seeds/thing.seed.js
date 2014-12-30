@@ -1,7 +1,7 @@
 /**
  * Created by anthony on 12/12/14.
  */
-exports.seed =
+exports.Thing =
     {
         name : 'Development Tools',
         info : 'Integration with popular tools such as Bower, Grunt, Karma, Mocha, JSHint, Node Inspector, Livereload, Protractor, Jade, Stylus, Sass, CoffeeScript, and Less.'
