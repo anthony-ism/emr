@@ -60,6 +60,6 @@ exports.token = function() {
                 });
         });
     });
-    return defferred.promise;
+
 
 }
