@@ -6,7 +6,6 @@ var reqlib = require('app-root-path').require;
 var should = require('should');
 var mongoose = require('mongoose');
 var mockgoose = require('mockgoose');
-var Q = require('Q');
 var Promise = require("native-promise-only");
 var request = require("supertest-as-promised");
 var app = reqlib('/server/app');
@@ -44,10 +43,9 @@ exports.seed = function() {
         mockgoose(mongoose);
         var User = reqlib('/server/api/user/user.model');
         var UserSeed = reqlib('/server/config/seeds/user.seed');
-
         var Practice = reqlib('/server/api/practice/practice.model');
         var PracticeSeed = reqlib('/server/config/seeds/practice.seed');
-
+        var promises = [];
         User.find({}).remove().exec().then(function() {
             return User.create(UserSeed.User);
         }).then(function() {
@@ -55,17 +53,12 @@ exports.seed = function() {
         }).then(function() {
             return Practice.create(PracticeSeed.Practice);
         }).then(function() {
-            return getToken();
-        }).then(function (res) {
-            token = res.body.token;
-            return getPracticeToken();
-        }).then(function(res) {
-            practiceToken = res.body.token;
-            return getDankysPracticeToken();
-        }).then(function(res) {
-            dankysPracticeToken = res.body.token;
-            var tokens = [token, practiceToken, dankysPracticeToken];
-            resolve(tokens);
+            promises.push(getToken());
+            promises.push(getPracticeToken());
+            promises.push(getDankysPracticeToken());
+            Promise.all(promises).then(function(tokens) {
+                resolve(tokens);
+            })
         });
     });
     return promise;

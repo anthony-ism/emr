@@ -1,26 +1,40 @@
 'use strict';
 var reqlib = require('app-root-path').require;
 var dataseed = reqlib('/server/test/dataseed');
-var logintoken = reqlib('/server/test/logintoken');
+var datareset = reqlib('/server/test/datareset');
 var app = reqlib('/server/app');
-var request = require('supertest');
-var chai = require('chai');
+var chai = require("chai");
+var chaiAsPromised = require("chai-as-promised");
 var expect = chai.expect;
-dataseed.seed();
+var request = require("supertest-as-promised");
+var mongoose = require('mongoose');
+var mockgoose = require('mockgoose');
 
-var token;
-var practiceToken;
-var dankysPracticeToken;
+chai.use(chaiAsPromised);
+mockgoose(mongoose);
+mockgoose.reset();
 
-logintoken.token(function(t, pt, dpt) {
-    token = t;
-    practiceToken = pt;
-    dankysPracticeToken = dpt;
-})
+var facilityID;
+var contactPhoneID;
 
+var token, practiceToken, dankysPracticeToken;
 
 
-describe('GET /api/practice/facility', function() {
+
+describe('/api/practice/facility', function() {
+    before(function (done) {
+        dataseed.seed().then(function (tokens) {
+            token = tokens[0].body.token;
+            practiceToken = tokens[1].body.token;
+            dankysPracticeToken = tokens[2].body.token;
+            done();
+        });
+    });
+    after(function (done) {
+        datareset.reset(done);
+    });
+
+
     var facilityID;
     describe('POST /api/practice/facility', function() {
         it("should create a new facility", function (done) {

@@ -1,24 +1,35 @@
 'use strict';
+'use strict';
 var reqlib = require('app-root-path').require;
 var dataseed = reqlib('/server/test/dataseed');
-var logintoken = reqlib('/server/test/logintoken');
+var datareset = reqlib('/server/test/datareset');
 var app = reqlib('/server/app');
-var request = require('supertest');
-var chai = require('chai');
+var chai = require("chai");
+var chaiAsPromised = require("chai-as-promised");
 var expect = chai.expect;
-dataseed.seed();
-var token;
-var practiceToken;
-var dankysPracticeToken;
+var request = require("supertest-as-promised");
+var mongoose = require('mongoose');
+var mockgoose = require('mockgoose');
 
-logintoken.token(function(t, pt, dpt) {
-    token = t;
-    practiceToken = pt;
-    dankysPracticeToken = dpt;
-})
+chai.use(chaiAsPromised);
+mockgoose(mongoose);
+mockgoose.reset();
 
 
+
+var token, practiceToken, dankysPracticeToken;
 describe('GET /api/practice/facility/hours', function() {
+    before(function (done) {
+        dataseed.seed().then(function (tokens) {
+            token = tokens[0].body.token;
+            practiceToken = tokens[1].body.token;
+            dankysPracticeToken = tokens[2].body.token;
+            done();
+        });
+    });
+    after(function (done) {
+        datareset.reset(done);
+    });
     var facilityID;
     var hoursID;
 

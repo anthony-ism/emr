@@ -1,52 +1,30 @@
 'use strict';
 var reqlib = require('app-root-path').require;
-
 var dataseed = reqlib('/server/test/dataseed');
 var datareset = reqlib('/server/test/datareset');
-var logintoken = reqlib('/server/test/logintoken');
-
 var app = reqlib('/server/app');
-
 var chai = require("chai");
 var chaiAsPromised = require("chai-as-promised");
-
-chai.use(chaiAsPromised);
 var expect = chai.expect;
-
-var token;
-var practiceToken;
-var dankysPracticeToken;
-
-var UserSeed = reqlib('/server/config/seeds/user.seed');
-var PracticeSeed = reqlib('/server/config/seeds/practice.seed');
 var request = require("supertest-as-promised");
-
-
-
 var mongoose = require('mongoose');
 var mockgoose = require('mockgoose');
 
-var Q = require('Q');
-
+chai.use(chaiAsPromised);
 mockgoose(mongoose);
 mockgoose.reset();
 
 
 var token, practiceToken, dankysPracticeToken;
-
-
 describe('/api/practice', function() {
-
     before(function(done) {
         dataseed.seed().then(function(tokens) {
-            token = tokens[0];
-            practiceToken = tokens[1];
-            dankysPracticeToken = tokens[2];
+            token = tokens[0].body.token;
+            practiceToken = tokens[1].body.token;
+            dankysPracticeToken = tokens[2].body.token;
             done();
         });
     });
-
-
     after(function(done) {
         datareset.reset(done);
     });
