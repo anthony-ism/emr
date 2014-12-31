@@ -3,6 +3,7 @@
 var _ = require('lodash');
 var Practice = require('./practice.model');
 var auth = require('../../auth/practiceAuth.service');
+var crud = require('../../components/crud/crud');
 
 
 var getUser = function(practice, email)
@@ -59,51 +60,16 @@ exports.show = function(req, res) {
 exports.findSubById = function(req, res) {
     getPractice(req, res, function(req, res, err, practice) {
         var params = req.originalUrl.split("/");
-        var obj = eval(generateEval(params));
+        var obj = eval(crud.generateEval(params));
         return res.json(obj);
 
     })
 };
 
-
-
-
-var generateSubParams = function(params)
-{
-    var result = "";
-    var subParams = params.split(".");
-    for (var i = 0; i < subParams.length; i++)
-        result += "['" + subParams[i] + "']";
-    return result;
-}
-
-var generateEval = function(params)
-{
-    var mongodb = require("mongodb"),
-        objectid = mongodb.BSONPure.ObjectID;
-
-    var obj = "";
-    for (var i = 2; i < params.length; i++)
-    {
-        if (objectid.isValid(params[i]))
-            obj += ".id('" + params[i] + "')";
-        else
-        {
-            if (obj.length == 0)
-                obj = params[i]
-            else if (params[i].indexOf(".") == -1)
-                obj += "['" + params[i] + "']";
-            else
-                obj += generateSubParams(params[i]);
-        }
-    }
-    return obj;
-}
-
 exports.createSub = function(req, res) {
     getPractice(req, res, function(req, res, err, practice){
         var params = req.originalUrl.split("/");
-        var obj = eval(generateEval(params));
+        var obj = eval(crud.generateEval(params));
         if (obj !== undefined)
             obj.push(req.body);
         practice.save(function (err) {
@@ -117,7 +83,7 @@ exports.createSub = function(req, res) {
 exports.updateSubById = function(req, res) {
     getPractice(req, res, function(req, res, err, practice){
         var params = req.originalUrl.split("/");
-        var obj = eval(generateEval(params));
+        var obj = eval(crud.generateEval(params));
         for (var key in req.body)
         {
             if (obj[key] !== undefined)
@@ -137,7 +103,7 @@ exports.destroySub = function(req, res) {
     getPractice(req, res, function(req, res, err, practice){
         var params = req.originalUrl.split("/");
         var _id = params.pop();
-        var obj = eval(generateEval(params));
+        var obj = eval(crud.generateEval(params));
         obj.pull({"_id": _id});
         practice.save(function (err) {
             if (err) { return handleError(res, err); }
@@ -155,7 +121,7 @@ exports.createUser = function (req, res, next) {
         if (practice === null) {
             getPractice(req, res, function (req, res, err, practice) {
                 var params = req.originalUrl.split("/");
-                var obj = eval(generateEval(params));
+                var obj = eval(crud.generateEval(params));
                 obj.push(req.body);
                 var newUser = obj[obj.length - 1];
                 newUser.provider = 'practice';
