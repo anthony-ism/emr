@@ -15,6 +15,15 @@ var getUser = function(practice, email)
     }
 }
 
+var getUserById = function(practice, id)
+{
+    for (var i =0; i < practice.user.length; i++)
+    {
+        if (practice.user[i]._id == id)
+            return practice.user[i];
+    }
+}
+
 
 exports.create = function(req, res) {
     Practice.create(req.body, function(err, practice) {
@@ -39,12 +48,23 @@ exports.userMe = function(req, res, next) {
 
 var getPracticeWithHash = function(req, res, next)
 {
-    Practice.findOne({'user._id': req.user._id}, function (err, practice) {
-        if (err) { return handleError(res, err); }
-        if (!practice) { return res.send(404); }
-        next(req, res, err, practice)
-    });
+    if (isAdmin(req)) {
+        Practice.findById(req.params.id, function (err, practice) {
+            if (!handleExceptions(err, res, practice))
+                next(req, res, err, practice)
+            else
+                return handleExceptions(err, res, practice);
+        });
+    } else {
+        Practice.findOne({'user._id': req.user._id}, function (err, practice) {
+            if (!handleExceptions(err, res, practice))
+                next(req, res, err, practice)
+            else
+                return handleExceptions(err, res, practice);
+        });
+    }
 }
+
 
 var isAdmin = function(req) {
     if (req.originalUrl.indexOf("/admin/") > -1)
@@ -161,10 +181,13 @@ exports.index = function(req, res) {
  * Creates a new user
  */
 exports.createUser = function (req, res, next) {
-    Practice.findOne({'user.email': req.body.email}, function (err, practice) {
-        if (practice === null) {
+    getPractice(req, res, function(req, res, err, practice){
+        var user = getUser(practice, req.body.email);
+        if (practice === null || user == null) {
             getPractice(req, res, function (req, res, err, practice) {
                 var params = req.originalUrl.split("/");
+                if (isAdmin(req))
+                    params.splice(3, 1);
                 var obj = eval(crud.generateEval(params));
                 obj.push(req.body);
                 var newUser = obj[obj.length - 1];
@@ -190,8 +213,11 @@ exports.createUser = function (req, res, next) {
  */
 exports.changePassword = function(req, res, next) {
     getPracticeWithHash(req, res, function (req, res, err, practice) {
-        var user = getUser(practice, req.user.email);
-        if (user.authenticate(String(req.body.oldPassword))) {
+        if (isAdmin(req))
+            var user = getUserById(practice, req.params.id2);
+        else
+            var user = getUser(practice, req.user.email);
+        if (user && user.authenticate(String(req.body.oldPassword))) {
             user.password = String(req.body.newPassword);
             practice.save(function (err) {
                 if (err) { return handleError(res, err) };

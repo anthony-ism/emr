@@ -122,7 +122,6 @@ describe('/admin/practice', function() {
                 });
         });
     });
-
 });
 
 

@@ -4,7 +4,6 @@
  */
 
 'use strict';
-
 return;
 var Thing = require('../api/thing/thing.model');
 var ThingSeed = require('./seeds/thing.seed')
@@ -14,16 +13,16 @@ var Practice = require('../api/practice/practice.model');
 var PracticeSeed = require('./seeds/practice.seed');
 
 Thing.find({}).remove(function() {
-  Thing.create(ThingSeed.seed)});
+  Thing.create(ThingSeed.Thing)});
 
 User.find({}).remove(function() {
-  User.create(UserSeed.seed, function() {
+  User.create(UserSeed.User, function() {
     }
   );
 });
 
 Practice.find({}).remove(function() {
-    Practice.create(PracticeSeed.seed)
+    Practice.create(PracticeSeed.Practice)
 });
 
 

@@ -21,16 +21,16 @@ router.get('/:id/facility/:id2/contact.phone/:id3', auth.hasRole('admin'), contr
 
     /** POST **/
 router.post('/', auth.hasRole('admin'), controller.create)
-/*
 router.post('/:id/user', auth.hasRole('admin'), controller.createUser);
+/*
 router.post('/:id/facility', auth.hasRole('admin'), controller.createSub);
 router.post('/:id/facility/:id2/hours', auth.hasRole('admin'), controller.createSub);
 router.post('/:id/facility/:id2/contact.phone', auth.hasRole('admin'), controller.createSub);
 */
     /** PUT **/
 router.put('/:id', auth.hasRole('admin'), controller.update);
-/*
 router.put('/:id/user/:id2/password', auth.hasRole('admin'), controller.changePassword);
+/*
 router.put('/:id/facility/:id2', auth.hasRole('admin'), controller.updateSubById);
 router.put('/:id/facility/:id2/hours/:id3', controller.auth.hasRole('admin'), updateSubById);
 */
