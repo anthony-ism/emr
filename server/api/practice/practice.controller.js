@@ -15,6 +15,14 @@ var getUser = function(practice, email)
     }
 }
 
+
+exports.create = function(req, res) {
+    Practice.create(req.body, function(err, practice) {
+        if(err) { return handleError(res, err); }
+        return res.json(201, practice);
+    });
+}
+
 //Return Logged in Practice
 exports.me = function(req, res, next) {
     getPractice(req,res, function(req, res, err, practice) {
@@ -38,32 +46,51 @@ var getPracticeWithHash = function(req, res, next)
     });
 }
 
-var getPractice = function(req, res, next)
-{
-    Practice.findOne({'user._id': req.user._id}, '-user.salt -user.hashedPassword', function (err, practice) {
-        if (err) { return handleError(res, err); }
-        if (!practice) { return res.send(404); }
-        next(req, res, err, practice)
-    });
+var isAdmin = function(req) {
+    if (req.originalUrl.indexOf("/admin/") > -1)
+        return true;
+    else
+        false;
 }
 
-exports.show = function(req, res) {
+var handleExceptions = function(err, res, practice) {
+    if (err) {
+        return handleError(res, err);
+    }
+    if (!practice) {
+        return res.send(404);
+    }
+    return false;
+}
+
+var getPractice = function(req, res, next)
+{
+    if (isAdmin(req)) {
+        Practice.findById(req.params.id, function (err, practice) {
+            if (!handleExceptions(err, res, practice))
+                next(req, res, err, practice)
+            else
+                return handleExceptions(err, res, practice);
+        });
+    } else {
+        Practice.findOne({'user._id': req.user._id}, '-user.salt -user.hashedPassword', function (err, practice) {
+            if (!handleExceptions(err, res, practice))
+                next(req, res, err, practice)
+            else
+                return handleExceptions(err, res, practice);
+        });
+    }
+}
+
+
+exports.read = function(req, res) {
     getPractice(req,res, function(req, res, err, practice) {
-        var originalUrl = req.originalUrl;
-        var params = originalUrl.split("/");
-        return res.json(practice[params[3]]);
-    });
-};
-
-
-
-exports.findSubById = function(req, res) {
-    getPractice(req, res, function(req, res, err, practice) {
         var params = req.originalUrl.split("/");
+        if (isAdmin(req))
+            params.splice(3, 1);
         var obj = eval(crud.generateEval(params));
         return res.json(obj);
-
-    })
+    });
 };
 
 exports.createSub = function(req, res) {
@@ -80,9 +107,11 @@ exports.createSub = function(req, res) {
 };
 
 
-exports.updateSubById = function(req, res) {
+exports.update = function(req, res) {
     getPractice(req, res, function(req, res, err, practice){
         var params = req.originalUrl.split("/");
+        if (isAdmin(req))
+            params.splice(3, 1);
         var obj = eval(crud.generateEval(params));
         for (var key in req.body)
         {
@@ -96,7 +125,16 @@ exports.updateSubById = function(req, res) {
     });
 };
 
-
+exports.destroy = function(req, res) {
+    getPractice(req, res, function(req, res, err, practice){
+        if(err) { return handleError(res, err); }
+        if(!practice) { return res.send(404); }
+        practice.remove(function(err) {
+            if(err) { return handleError(res, err); }
+            return res.send(204);
+        });
+    });
+};
 
 // Deletes a practice from the DB.
 exports.destroySub = function(req, res) {
@@ -112,6 +150,12 @@ exports.destroySub = function(req, res) {
     });
 };
 
+exports.index = function(req, res) {
+    Practice.find(function (err, practices) {
+        if(err) { return handleError(res, err); }
+        return res.json(200, practices);
+    });
+};
 
 /**
  * Creates a new user

@@ -8,13 +8,13 @@ var auth = require('../../auth/auth.service');
     /** GET **/
     router.get('/me', practiceAuth.isAuthenticated(), controller.me);
     router.get('/user/me', practiceAuth.isAuthenticated(), controller.userMe);
-    router.get('/user', practiceAuth.isAuthenticated(), controller.show);
-    router.get('/facility', practiceAuth.isAuthenticated(), controller.show);
-    router.get('/facility/:id2', practiceAuth.isAuthenticated(), controller.findSubById);
-    router.get('/facility/:id2/hours', practiceAuth.isAuthenticated(), controller.findSubById);
-    router.get('/facility/:id2/hours/:id3', practiceAuth.isAuthenticated(), controller.findSubById);
-    router.get('/facility/:id2/contact.phone', practiceAuth.isAuthenticated(), controller.findSubById);
-    router.get('/facility/:id2/contact.phone/:id3', practiceAuth.isAuthenticated(), controller.findSubById);
+    router.get('/user', practiceAuth.isAuthenticated(), controller.read);
+    router.get('/facility', practiceAuth.isAuthenticated(), controller.read);
+    router.get('/facility/:id2', practiceAuth.isAuthenticated(), controller.read);
+    router.get('/facility/:id2/hours', practiceAuth.isAuthenticated(), controller.read);
+    router.get('/facility/:id2/hours/:id3', practiceAuth.isAuthenticated(), controller.read);
+    router.get('/facility/:id2/contact.phone', practiceAuth.isAuthenticated(), controller.read);
+    router.get('/facility/:id2/contact.phone/:id3', practiceAuth.isAuthenticated(), controller.read);
 
     /** POST **/
     router.post('/user', practiceAuth.isAuthenticated(), controller.createUser);
@@ -25,9 +25,9 @@ var auth = require('../../auth/auth.service');
 
     /** PUT **/
     router.put('/user/password', practiceAuth.isAuthenticated(), controller.changePassword);
-    router.put('/facility/:id2', practiceAuth.isAuthenticated(), controller.updateSubById);
-    router.put('/facility/:id2/hours/:id3', practiceAuth.isAuthenticated(), controller.updateSubById);
-    router.put('/facility/:id2/contact.phone/:id3', practiceAuth.isAuthenticated(), controller.updateSubById);
+    router.put('/facility/:id2', practiceAuth.isAuthenticated(), controller.update);
+    router.put('/facility/:id2/hours/:id3', practiceAuth.isAuthenticated(), controller.update);
+    router.put('/facility/:id2/contact.phone/:id3', practiceAuth.isAuthenticated(), controller.update);
 
 
     /** DELETE **/

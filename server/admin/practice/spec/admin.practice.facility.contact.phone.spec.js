@@ -29,71 +29,7 @@ describe('/admin/practice', function() {
         datareset.reset(done);
     });
 
-
     var practiceID, userID, facilityID, hoursID, contactPhoneID;
-    describe('POST /admin/practice', function() {
-        it("should create new practice", function (done) {
-            var name = "Testing";
-            var agent = request.agent(app);
-            agent
-                .post("/admin/practice")
-                .send({ name: name})
-                .set({'Authorization': 'Bearer ' + token})
-                .expect(200)
-                .end(function (err, res) {
-                    practiceID = res.body._id;
-                    expect(res.body.name).to.be.equal(name);
-                    done();
-                });
-        });
-    });
-
-    describe('PUT /admin/practice', function() {
-        it("should update a particular practice", function (done) {
-            var name = "Testing 123";
-            var agent = request.agent(app);
-            agent
-                .put("/admin/practice/" + practiceID)
-                .send({ name: name})
-                .set({'Authorization': 'Bearer ' + token})
-                .expect(200)
-                .end(function (err, res) {
-                    expect(practiceID).to.be.equal(res.body._id);
-                    expect(res.body.name).to.be.equal(name);
-                    done();
-                });
-        });
-    });
-
-
-    describe('GET /admin/practice', function() {
-        it("should list all practices", function (done) {
-            var agent = request.agent(app);
-            agent
-                .get("/admin/practice")
-                .set({'Authorization': 'Bearer ' + token})
-                .expect(200)
-                .end(function (err, res) {
-                    practiceID = res.body[0]._id;
-                    expect(res.body.length).to.be.equal(3);
-                    done();
-                });
-        });
-    });
-
-    describe('DELETE /admin/practice', function() {
-        it("should delete a particular practice", function (done) {
-            var agent = request.agent(app);
-            agent
-                .delete("/admin/practice/" + practiceID)
-                .set({'Authorization': 'Bearer ' + token})
-                .expect(204)
-                .end(function (err, res) {
-                    done();
-                });
-        });
-    });
-
     describe('GET /admin/practice', function() {
         it("should list all practices", function (done) {
             var agent = request.agent(app);
@@ -109,20 +45,53 @@ describe('/admin/practice', function() {
         });
     });
 
-    describe('GET /admin/practice/:id', function() {
-        it("should list a particular practice", function (done) {
+
+
+    describe('GET /admin/practice/:id/facility', function() {
+        it("should list all facilities in a particular practice", function (done) {
             var agent = request.agent(app);
             agent
-                .get("/admin/practice/" + practiceID)
+                .get("/admin/practice/" + practiceID + "/facility")
                 .set({'Authorization': 'Bearer ' + token})
                 .expect(200)
                 .end(function (err, res) {
-                    expect(res.body._id).to.be.equal(practiceID);
+                    facilityID = res.body[0]._id;
+                    expect(res.body.length).to.be.equal(1);
                     done();
                 });
         });
     });
 
+
+
+    describe('GET /admin/practice/:id/facility/:id2/contact.phone', function() {
+        it("should list all contact.phone from a particular facility from a particular practice", function (done) {
+            var agent = request.agent(app);
+            agent
+                .get("/admin/practice/" + practiceID + "/facility/" + facilityID + "/contact.phone")
+                .set({'Authorization': 'Bearer ' + token})
+                .expect(200)
+                .end(function (err, res) {
+                    contactPhoneID = res.body[0]._id;
+                    expect(res.body.length).to.be.equal(1);
+                    done();
+                });
+        });
+    });
+
+    describe('GET /admin/practice/:id/facility/:id2/contact.phone/:id3', function() {
+        it("should list a particular contact.phone from particular facility from a particular practice", function (done) {
+            var agent = request.agent(app);
+            agent
+                .get("/admin/practice/" + practiceID + "/facility/" + facilityID + "/contact.phone/" + contactPhoneID)
+                .set({'Authorization': 'Bearer ' + token})
+                .expect(200)
+                .end(function (err, res) {
+                    expect(res.body._id).to.be.equal(contactPhoneID);
+                    done();
+                });
+        });
+    });
 });
 
 
