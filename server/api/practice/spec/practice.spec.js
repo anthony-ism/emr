@@ -83,7 +83,7 @@ describe('/api/practice', function() {
                 .set({'Authorization': 'Bearer ' + practiceToken})
                 .expect(200)
                 .end(function (err, res) {
-                    expect(res.body.name).to.be.equal('Test User');
+                    expect(res.body.name.first).to.be.equal('Test');
                     done();
                 });
         });
@@ -95,7 +95,7 @@ describe('/api/practice', function() {
                 .set({'Authorization': 'Bearer ' + dankysPracticeToken})
                 .expect(200)
                 .end(function (err, res) {
-                    expect(res.body.name).to.be.equal('Dankys');
+                    expect(res.body.name.first).to.be.equal('Dankys');
                     done();
                 });
         });

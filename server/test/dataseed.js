@@ -41,7 +41,7 @@ exports.seed = function() {
     var token, practiceToken, dankysPracticeToken;
     var promise = new Promise(function(resolve, reject) {
         mockgoose(mongoose);
-        var User = reqlib('/server/api/user/user.model');
+        var User = reqlib('/server/admin/user/user.model');
         var UserSeed = reqlib('/server/config/seeds/user.seed');
         var Practice = reqlib('/server/api/practice/practice.model');
         var PracticeSeed = reqlib('/server/config/seeds/practice.seed');

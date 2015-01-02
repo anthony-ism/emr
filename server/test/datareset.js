@@ -11,7 +11,7 @@ var mockgoose = require('mockgoose');
 exports.reset = function(done) {
     mockgoose(mongoose);
     var Thing = reqlib('/server/api/thing/thing.model');
-    var User = reqlib('/server/api/user/user.model');
+    var User = reqlib('/server/admin/user/user.model');
     var Practice = reqlib('/server/api/practice/practice.model');
     User.remove().exec();
     Thing.remove().exec();

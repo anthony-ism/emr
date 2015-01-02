@@ -38,7 +38,7 @@ describe('/api/practice/user', function() {
                 .set({'Authorization': 'Bearer ' + practiceToken})
                 .expect(200)
                 .end(function (err, res) {
-                    expect(res.body.name).to.be.equal('Test User');
+                    expect(res.body.name.first).to.be.equal('Test');
                     done();
                 });
         });
@@ -50,7 +50,7 @@ describe('/api/practice/user', function() {
                 .set({'Authorization': 'Bearer ' + dankysPracticeToken})
                 .expect(200)
                 .end(function (err, res) {
-                    expect(res.body.name).to.be.equal('Dankys');
+                    expect(res.body.name.first).to.be.equal('Dankys');
                     done();
                 });
         });
@@ -75,7 +75,7 @@ describe('/api/practice/user', function() {
                 .send({
                     provider: 'practice',
                     role: 'user',
-                    name: 'Test User',
+                    name: { first: 'Test'},
                     email: 'test@test.com',
                     password: 'test'
                 })
@@ -94,7 +94,7 @@ describe('/api/practice/user', function() {
                 .send({
                     provider: 'practice',
                     role: 'user',
-                    name: 'Test User',
+                    name: { first: 'Test'},
                     email: 'tes2t@test.com'
                 })
                 .set({'Authorization': 'Bearer ' + practiceToken})
@@ -112,7 +112,7 @@ describe('/api/practice/user', function() {
                 .send({
                     provider: 'practice',
                     role: 'user',
-                    name: 'Test User',
+                    name: { first: 'Test'},
                     email: 'tes2t@test.com',
                     password: 'password'
                 })
@@ -130,7 +130,7 @@ describe('/api/practice/user', function() {
                 .send({
                     provider: 'practice',
                     role: 'user',
-                    name: 'Test User',
+                    name: { first: 'Test'},
                     email: 'tes2t@test.com',
                     password: 'password'
                 })

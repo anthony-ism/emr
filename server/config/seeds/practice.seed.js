@@ -30,14 +30,22 @@ exports.Practice =  [{
     user: [{
         provider: 'practice',
         role: 'user',
-        name: 'Test User',
+        name: {
+            first: "Test",
+            middle: "Middle",
+            last: "Last"
+        },
         email: 'test@test.com',
         password: 'test'
     },
         {
             provider: 'practice',
             role: 'admin',
-            name: 'Admin',
+            name: {
+                first: "Admin",
+                middle: "Middle",
+                last: "Last"
+            },
             email: 'admin@admin.com',
             password: 'admin'
         }],
@@ -70,7 +78,11 @@ exports.Practice =  [{
     }],
     user: [{
         provider: 'practice',
-        name: 'Dankys',
+        name: {
+            first: "Dankys",
+            middle: "Middle",
+            last: "Last"
+        },
         email: 'jpdanks@gmail.com',
         password: 'dankys',
         role: 'user'
@@ -78,7 +90,11 @@ exports.Practice =  [{
         {
             provider: 'practice',
             role: 'admin',
-            name: 'Admin',
+            name: {
+                first: "Admin",
+                middle: "Middle",
+                last: "Last"
+            },
             email: 'kingtut@gmail.com',
             password: 'admin'
         }],

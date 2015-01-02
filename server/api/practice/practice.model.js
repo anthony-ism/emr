@@ -7,18 +7,9 @@ var contact = require('../../genericModels/contact.js');
 
 var crypto = require('crypto');
 
-//var UserSchema = require('../user/user.model');
-var UserSchema = new Schema({
-    name: String,
-    email: { type: String, lowercase: true },
-    role: {
-        type: String,
-        default: 'user'
-    },
-    hashedPassword: String,
-    provider: String,
-    salt: String
-});
+
+var user = require('../../genericModels/user.js');
+var UserSchema = new Schema(user.user);
 
 /**
  * Virtuals
