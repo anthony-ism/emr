@@ -45,6 +45,106 @@ describe('/admin/practice', function() {
         });
     });
 
+
+    describe("POST /admin/practice/:id/facility", function() {
+        it("should create a new facility", function (done) {
+            var agent = request.agent(app);
+            var name = "Down Town Office II";
+            agent
+                .post("/admin/practice/" +practiceID + "/facility")
+                .set({'Authorization': 'Bearer ' + token})
+                .send({name: name})
+                .expect(200)
+                .end(function (err, res) {
+                    facilityID = res.body._id;
+                    expect(res.body.name).to.be.equal(name);
+                    done();
+                });
+        });
+
+
+        it("should return 401", function (done) {
+            var agent = request.agent(app);
+            var name = "Down Town Office II";
+            agent
+                .post("/admin/practice/" + practiceID + "/facility")
+                .set({'Authorization': 'Bearer ' + practiceToken})
+                .send({name: name})
+                .expect(401)
+                .end(function (err, res) {
+                    expect(res.error.status).to.be.equal(401);
+                    done();
+                });
+        });
+
+    });
+
+    describe('PUT /admin/practice/:id/facility', function() {
+
+        var name = "Down Town Office III";
+        it("should update previously added facility", function (done) {
+            var agent = request.agent(app);
+            agent
+                .put("/admin/practice/" + practiceID + "/facility/" + facilityID)
+                .set({'Authorization': 'Bearer ' + token})
+                .send({name: name})
+                .expect(200)
+                .end(function (err, res) {
+                    expect(res.body.name).to.be.equal(name);
+                    done();
+                });
+
+        });
+
+
+        it("return 401", function (done) {
+            var agent = request.agent(app);
+            agent
+                .put("/admin/practice/" + practiceID +  "/facility/" + facilityID)
+                .set({'Authorization': 'Bearer ' + practiceToken})
+                .send({name: name})
+                .expect(401)
+                .end(function (err, res) {
+                    expect(res.error.status).to.be.equal(401);
+                    done();
+                });
+        });
+
+    });
+
+
+
+    describe('GET /admin/practice/:id/facility', function() {
+
+        it("should list rza's facility", function(done) {
+            var agent = request.agent(app);
+            agent
+                .get("/admin/practice/" + practiceID + "/facility")
+                .set({'Authorization': 'Bearer ' + token})
+                .expect(200)
+                .end(function (err, res) {
+                    expect(res.body[0].name).to.be.equal("Down town office");
+                    expect(res.body[1].name).to.be.equal("Down Town Office III");
+                    facilityID = res.body[0]._id;
+                    done();
+                });
+        });
+    });
+
+    describe("DELETE /admin/practice/" + practiceID + "/facility", function() {
+        it("should remove facility", function (done) {
+            var agent = request.agent(app);
+            agent
+                .delete("/admin/practice/" + practiceID + "/facility/" + facilityID)
+                .set({'Authorization': 'Bearer ' + token})
+                .expect(200)
+                .end(function (err, res) {
+                    expect(res.body.length).to.be.equal(1);
+                    done();
+                });
+        });
+    });
+
     describe('GET /admin/practice/:id/facility', function() {
         it("should list all facilities in a particular practice", function (done) {
             var agent = request.agent(app);

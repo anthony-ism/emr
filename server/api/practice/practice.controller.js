@@ -116,6 +116,8 @@ exports.read = function(req, res) {
 exports.createSub = function(req, res) {
     getPractice(req, res, function(req, res, err, practice){
         var params = req.originalUrl.split("/");
+        if (isAdmin(req))
+            params.splice(3, 1);
         var obj = eval(crud.generateEval(params));
         if (obj !== undefined)
             obj.push(req.body);
@@ -160,6 +162,8 @@ exports.destroy = function(req, res) {
 exports.destroySub = function(req, res) {
     getPractice(req, res, function(req, res, err, practice){
         var params = req.originalUrl.split("/");
+        if (isAdmin(req))
+            params.splice(3, 1);
         var _id = params.pop();
         var obj = eval(crud.generateEval(params));
         obj.pull({"_id": _id});

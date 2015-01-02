@@ -59,21 +59,6 @@ describe('/admin/practice', function() {
         });
     });
 
-    describe('GET /admin/practice/:id/user', function() {
-        it("should list all users in a particular practice", function (done) {
-            var agent = request.agent(app);
-            agent
-                .get("/admin/practice/" + practiceID + "/user")
-                .set({'Authorization': 'Bearer ' + token})
-                .expect(200)
-                .end(function (err, res) {
-                    userID = res.body[0]._id;
-                    expect(res.body.length).to.be.equal(2);
-                    done();
-                });
-        });
-    });
-
     describe('GET /admin/practice/:id/facility', function() {
         it("should list all facilities in a particular practice", function (done) {
             var agent = request.agent(app);
@@ -88,6 +73,84 @@ describe('/admin/practice', function() {
                 });
         });
     });
+
+    describe("POST /admin/practice/:id/facility/:id2/hours", function() {
+        it("should add rza's Down town office hour", function(done) {
+            var day  = "Tuesday";
+            var agent = request.agent(app);
+            agent
+                .post("/admin/practice/" + practiceID + "/facility/" + facilityID + "/hours")
+                .set({'Authorization': 'Bearer ' + token})
+                .send({"day": day})
+                .expect(200)
+                .end(function (err, res) {
+                    hoursID = res.body._id;
+                    expect(res.body.day).to.be.equal(day);
+                    done();
+                });
+        });
+    });
+
+    describe('PUT /admin/practice/:id/facility/:id2/hours/:id3', function() {
+        it("should update rza's Down town office hour", function(done) {
+            var day  = "Wednesday";
+            var agent = request.agent(app);
+            agent
+                .put("/admin/practice/" + practiceID + "/facility/" + facilityID + "/hours/" + hoursID)
+                .set({'Authorization': 'Bearer ' + token})
+                .send({"day": day})
+                .expect(200)
+                .end(function (err, res) {
+                    expect(res.body.day).to.be.equal(day);
+                    done();
+                });
+        });
+    });
+
+    describe('GET /admin/practice/:id/facility/:id2/hours', function() {
+        it("should list rza's Down town office hours", function(done) {
+            var agent = request.agent(app);
+            agent
+                .get("/admin/practice/" + practiceID + "/facility/" + facilityID + "/hours")
+                .set({'Authorization': 'Bearer ' + token})
+                .expect(200)
+                .end(function (err, res) {
+                    expect(res.body.length).to.be.equal(2);
+                    expect(res.body[0].day).to.be.equal("Monday");
+                    hoursID = res.body[0]._id;
+                    done();
+                });
+        });
+
+        it("should list rza's Down town office hour", function(done) {
+            var agent = request.agent(app);
+            agent
+                .get("/admin/practice/" + practiceID +  "/facility/" + facilityID + "/hours/" + hoursID)
+                .set({'Authorization': 'Bearer ' + token})
+                .expect(200)
+                .end(function (err, res) {
+                    expect(res.body.day).to.be.equal("Monday");
+                    done();
+                });
+        });
+
+    });
+
+    describe('DELETE /admin/practice/:id/facility/:id2/hours/:id3', function() {
+        it("should remove facility", function (done) {
+            var agent = request.agent(app);
+            agent
+                .delete("/admin/practice/" + practiceID + "/facility/" + facilityID + "/hours/" + hoursID)
+                .set({'Authorization': 'Bearer ' + token})
+                .expect(200)
+                .end(function (err, res) {
+                    expect(res.body.length).to.be.equal(1);
+                    done();
+                });
+        });
+    });
+
+
 
     describe('GET /admin/practice/:id/facility/:id2/hours', function() {
         it("should list all hours from a particular facility from a particular practice", function (done) {

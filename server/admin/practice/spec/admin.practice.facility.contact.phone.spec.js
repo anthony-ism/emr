@@ -62,6 +62,94 @@ describe('/admin/practice', function() {
         });
     });
 
+    describe('POST /api/practice/:id/facility/:id2/contact.phone', function () {
+        it("should add rza's Down town office hour", function (done) {
+            var description = "Office Backup";
+            var agent = request.agent(app);
+            agent
+                .post("/admin/practice/" + practiceID + "/facility/" + facilityID + "/contact.phone")
+                .set({'Authorization': 'Bearer ' + token})
+                .send({"description": description})
+                .expect(200)
+                .end(function (err, res) {
+                    contactPhoneID = res.body._id;
+                    expect(res.body.description).to.be.equal(description);
+                    done();
+                });
+        });
+
+        it("should list a particular contact.phone from particular facility from a particular practice", function (done) {
+            var agent = request.agent(app);
+            agent
+                .get("/admin/practice/" + practiceID + "/facility/" + facilityID + "/contact.phone/" + contactPhoneID)
+                .set({'Authorization': 'Bearer ' + token})
+                .expect(200)
+                .end(function (err, res) {
+                    expect(res.body._id).to.be.equal(contactPhoneID);
+                    done();
+                });
+        });
+
+    });
+
+    describe('PUT /admin/practice/:id/facility/:id2/contact.phone/:id3', function () {
+        var description = "Office Backup II";
+        it("should update rza's Down town office hour", function (done) {
+            var agent = request.agent(app);
+            agent
+                .put("/admin/practice/" + practiceID + "/facility/" + facilityID + "/contact.phone/" + contactPhoneID)
+                .set({'Authorization': 'Bearer ' + token})
+                .send({"description": description})
+                .expect(200)
+                .end(function (err, res) {
+                    expect(res.body.description).to.be.equal(description);
+                    done();
+                });
+        });
+        it("should list a particular contact.phone from particular facility from a particular practice", function (done) {
+            var agent = request.agent(app);
+            agent
+                .get("/admin/practice/" + practiceID + "/facility/" + facilityID + "/contact.phone/" + contactPhoneID)
+                .set({'Authorization': 'Bearer ' + token})
+                .expect(200)
+                .end(function (err, res) {
+                    expect(res.body.description).to.be.equal(description);
+                    done();
+                });
+        });
+    });
+
+    describe('GET /admin/practice/:id/facility/:id2/contact.phone', function() {
+        it("should list all contact.phone from a particular facility from a particular practice", function (done) {
+            var agent = request.agent(app);
+            agent
+                .get("/admin/practice/" + practiceID + "/facility/" + facilityID + "/contact.phone")
+                .set({'Authorization': 'Bearer ' + token})
+                .expect(200)
+                .end(function (err, res) {
+                    contactPhoneID = res.body[0]._id;
+                    expect(res.body.length).to.be.equal(2);
+                    done();
+                });
+        });
+    });
+
+    describe('DELETE /admin/practice/:id/facility/:id2/contact.phone/:id3', function () {
+        it("should delete rza's Down town office hour", function (done) {
+            var description = "Office Backup II";
+            var agent = request.agent(app);
+            agent
+                .delete("/admin/practice/" + practiceID + "/facility/" + facilityID + "/contact.phone/" + contactPhoneID)
+                .set({'Authorization': 'Bearer ' + token})
+                .send({"description": description})
+                .expect(200)
+                .end(function (err, res) {
+                    expect(res.body.length).to.be.equal(1);
+                    done();
+                });
+        });
+    });
+
 
 
     describe('GET /admin/practice/:id/facility/:id2/contact.phone', function() {
