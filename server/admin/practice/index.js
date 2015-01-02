@@ -1,11 +1,9 @@
 'use strict';
 var express = require('express');
 var controller = require('../../api/practice/practice.controller');
-
 var router = express.Router();
 var practiceAuth = require('../../auth/practiceAuth.service');
 var auth = require('../../auth/auth.service');
-var userController = require('./admin.user.controller');
 
     /** GET **/
 router.get('/', auth.hasRole('admin'), controller.index);
