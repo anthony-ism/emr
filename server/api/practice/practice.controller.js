@@ -128,6 +128,13 @@ exports.createSub = function(req, res) {
     });
 };
 
+exports.createWoReq = function(parent, obj, body) {
+    obj.push(body);
+    parent.save(function (err) {
+        if (err) { return false; }
+        return res.json(200, obj[obj.length -1]);
+    });
+}
 
 exports.update = function(req, res) {
     getPractice(req, res, function(req, res, err, practice){
@@ -146,6 +153,8 @@ exports.update = function(req, res) {
         });
     });
 };
+
+
 
 exports.destroy = function(req, res) {
     getPractice(req, res, function(req, res, err, practice){

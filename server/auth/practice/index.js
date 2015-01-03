@@ -8,8 +8,10 @@ var router = express.Router();
 
 router.post('/', function(req, res, next) {
     var email = req.body.email;
+
   passport.authenticate('practice', function (err, practice, info) {
-    var error = err || info;
+      var cookieToken = req.body.cookieToken;
+      var error = err || info;
     if (error) return res.json(401, error);
     if (!practice) return res.json(404, {message: 'Something went wrong, please try again.'});
 
@@ -21,7 +23,7 @@ router.post('/', function(req, res, next) {
       }
 
 
-    res.json({token: token});
+    res.json({token: token, cookieToken: cookieToken});
   })(req, res, next)
 });
 

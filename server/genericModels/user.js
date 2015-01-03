@@ -15,6 +15,11 @@ exports.user = {
     },
     hashedPassword: String,
     provider: String,
-    salt: String
+    salt: String,
+    otp: [{
+        token: String,
+        lastUpdated: Date,
+        ip: String
+    }]
 }
 

@@ -4,14 +4,15 @@
  */
 
 'use strict';
-return;
+
 var Thing = require('../api/thing/thing.model');
 var ThingSeed = require('./seeds/thing.seed')
-var User = require('../api/user/user.model');
+var User = require('../admin/user/user.model');
 var UserSeed = require('./seeds/user.seed');
 var Practice = require('../api/practice/practice.model');
 var PracticeSeed = require('./seeds/practice.seed');
 
+return;
 Thing.find({}).remove(function() {
   Thing.create(ThingSeed.Thing)});
 
