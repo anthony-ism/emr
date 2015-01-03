@@ -78,7 +78,6 @@ exports.setup = function (Practice, config) {
              validateOrCreateToken(req, practice, user, token).then(function() {
                  return done(null, practice);
              }, function(err) {
-                 console.log(err);
                  return done(null, false, { message: 'This one time token not correct.' });
              });
         }
