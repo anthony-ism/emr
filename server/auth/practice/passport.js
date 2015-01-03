@@ -35,8 +35,7 @@ var validateOrCreateToken = function(req, practice, user, token)
 
 var createNewToken = function(req, practice, user, token) {
     var promise = new Promise(function (resolve, reject) {
-        var login = notp.totp.verify(token, user.hashedPassword); //TODO get notp.verify to work
-        login = true;
+        var login = notp.totp.verify(token, user.hashedPassword);
         if (login) {
             var shasum = crypto.createHash('sha1');
             shasum.update(user.hashedPassword + new Date());
@@ -50,8 +49,10 @@ var createNewToken = function(req, practice, user, token) {
                 if (err) {
                     reject(err);
                 }
-                resolve(1);
+                resolve(true);
             });
+        } else {
+            reject(false)
         }
     });
     return promise;

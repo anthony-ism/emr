@@ -42,7 +42,7 @@ router.get('/otp/:email', function(req, res, next) {
             if (practice.user[i].email == email) {
                 var user = practice.user[i];
             }
-            var otp = notp.totp.gen(user.hashedPassword, 30); //TODO Service that sends the OPT to SMS
+            var otp = notp.totp.gen(user.hashedPassword, {time: 30}); //TODO Service that sends the OPT to SMS
             res.json({otp: otp});
         }
     });
