@@ -2,6 +2,7 @@
 
 var path = require('path');
 var _ = require('lodash');
+var nodemailer = require('nodemailer');
 
 function requiredProcessEnv(name) {
   if(!process.env[name]) {
@@ -40,8 +41,18 @@ var all = {
       }
     }
   },
-
+  email : {
+    transporter : nodemailer.createTransport({
+      service: 'gmail',
+        auth: {
+          user: 'dentalemr1@gmail.com',
+          pass: '!@#dental'
+        }
+    })
+  }
 };
+
+
 
 // Export the config object based on the NODE_ENV
 // ==============================================

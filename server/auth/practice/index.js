@@ -6,26 +6,20 @@ var auth = require('../practiceAuth.service');
 var notp = require('notp');
 var router = express.Router();
 var Practice = require('../../api/practice/practice.model');
+var controller = require('../../api/practice/practice.controller');
+var config = require('../../config/environment');
 
 
 router.post('/', function(req, res, next) {
     var email = req.body.email;
-  passport.authenticate('practice', function (err, practice, info) {
-      var cookieToken = req.body.cookieToken;
-      var error = err || info;
-    if (error) return res.json(401, error);
-    if (!practice) return res.json(404, {message: 'Something went wrong, please try again.'});
-
-
-      for (var i =0; i < practice.user.length; i++)
-      {
-          if (practice.user[i].email == email)
-          {
-              var user = practice.user[i];
-              var token = auth.signToken(practice.user[i]._id, practice.user[i].email);
-          }
-      }
-      res.json({token: token, cookieToken: cookieToken});
+    passport.authenticate('practice', function (err, practice, info) {
+        var cookieToken = req.body.cookieToken;
+        var error = err || info;
+        if (error) return res.json(401, error);
+        if (!practice) return res.json(404, {message: 'Something went wrong, please try again.'});
+        var user = controller.getUser(practice, email);
+        var token = auth.signToken(user._id, user.email);
+        res.json({token: token, cookieToken: cookieToken});
   })(req, res, next)
 });
 
@@ -38,12 +32,18 @@ router.get('/otp/:email', function(req, res, next) {
             res.json({otp: otp});
             return;
         }
-        for (var i = 0; i < practice.user.length; i++) {
-            if (practice.user[i].email == email) {
-                var user = practice.user[i];
-            }
-            var otp = notp.totp.gen(user.hashedPassword, {time: 30}); //TODO Service that sends the OPT to SMS
-            res.json({otp: otp});
+        var user = controller.getUser(practice, email);
+        var otp = notp.totp.gen(user.hashedPassword, {time: 30});
+        if(req.query.destination === "sms")
+            res.json({otp: otp}); //TODO Service that sends the OTP to SMS
+        else
+        {
+            config.email.transporter.sendMail({ //TODO Email Repository
+                from: 'dentalemr1@gmail.com',
+                to: 'rizzo0917@gmail.com',
+                subject: 'Email OTP',
+                text: 'OTP:' + otp
+            });
         }
     });
 });

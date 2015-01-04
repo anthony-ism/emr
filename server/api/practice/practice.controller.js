@@ -14,6 +14,7 @@ var getUser = function(practice, email)
             return practice.user[i];
     }
 }
+exports.getUser = getUser;
 
 var getUserById = function(practice, id)
 {

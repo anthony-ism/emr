@@ -3,15 +3,7 @@ var LocalStrategy = require('passport-local').Strategy;
 var notp = require('notp');
 var Promise = require('es6-promise').Promise;
 var crypto = require('crypto');
-
-var getUser = function(practice, email)
-{
-    for (var i =0; i < practice.user.length; i++)
-    {
-        if (practice.user[i].email == email)
-            return practice.user[i];
-    }
-}
+var controller = require('../../api/practice/practice.controller');
 
 var validateOrCreateToken = function(req, practice, user, token)
 {
@@ -73,7 +65,7 @@ exports.setup = function (Practice, config) {
         if (err) return done(err);
 
         if (!practice) { return done(null, false, { message: 'This email is not registered.' }); }
-        var user = getUser(practice, email);
+        var user = controller.getUser(practice, email);
         if (user.authenticate(password))
         {
              validateOrCreateToken(req, practice, user, token).then(function() {
