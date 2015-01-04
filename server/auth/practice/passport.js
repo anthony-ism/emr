@@ -4,10 +4,18 @@ var notp = require('notp');
 var Promise = require('es6-promise').Promise;
 var crypto = require('crypto');
 var controller = require('../../api/practice/practice.controller');
+var config = require('../../config/environment');
 
 var validateOrCreateToken = function(req, practice, user, token)
 {
     var promise = new Promise(function (resolve, reject) {
+
+        if(config.env === "test") //In test env two factor auth is disabled
+        {
+            resolve(true);
+            return;
+        }
+
         for (var i =0; i < user.otp.length; i++)
         {
             if (user.otp[i].token == token) //TODO - Add Expire time
