@@ -48,17 +48,77 @@ describe('/admin/practice', function() {
 
     describe('POST /admin/practice/:id/user', function () {
 
+
+        var existing_user = {
+            provider: 'practice',
+            role: 'user',
+            name: { first: 'Test'},
+            contact: {
+                address: {
+                    number: 1022,
+                    direction: "",
+                    street: "Trenton Pl",
+                    zip5: 19801,
+                    country: "United States"
+                },
+                phone: [{description: "Mobile", number: "2679743526"}],
+                email: "test@test.com",
+                canSMS: 1,
+                canVoice: 1,
+                canEmail: 1,
+                preferred: 1
+            },
+            password: 'test'
+        };
+
+        var new_user_no_pass = {
+            provider: 'practice',
+            role: 'user',
+            name: { first: 'Test'},
+            contact: {
+                address: {
+                    number: 1022,
+                    direction: "",
+                    street: "Trenton Pl",
+                    zip5: 19801,
+                    country: "United States"
+                },
+                phone: [{description: "Mobile", number: "2679743526"}],
+                email: "tes2t@test.com",
+                canSMS: 1,
+                canVoice: 1,
+                canEmail: 1,
+                preferred: 1
+            }
+        }
+
+        var new_user = {
+            provider: 'practice',
+            role: 'user',
+            name: { first: 'Test'},
+            contact: {
+                address: {
+                    number: 1022,
+                    direction: "",
+                    street: "Trenton Pl",
+                    zip5: 19801,
+                    country: "United States"
+                },
+                phone: [{description: "Mobile", number: "2679743526"}],
+                email: "tes2t@test.com",
+                canSMS: 1,
+                canVoice: 1,
+                canEmail: 1,
+                preferred: 1
+            },
+            password: 'password'
+        }
+
         it("should say user exists for this new user", function (done) {
             var agent = request.agent(app);
             agent
                 .post("/admin/practice/" + practiceID + "/user")
-                .send({
-                    provider: 'practice',
-                    role: 'user',
-                    name: 'Test User',
-                    email: 'test@test.com',
-                    password: 'test'
-                })
+                .send(existing_user)
                 .set({'Authorization': 'Bearer ' + token})
                 .expect(500)
                 .end(function (err, res) {
@@ -73,12 +133,7 @@ describe('/admin/practice', function() {
             var agent = request.agent(app);
             agent
                 .post("/admin/practice/" + practiceID + "/user")
-                .send({
-                    provider: 'practice',
-                    role: 'user',
-                    name: 'Test User',
-                    email: 'tes2t@test.com'
-                })
+                .send(new_user_no_pass)
                 .set({'Authorization': 'Bearer ' + token})
                 .expect(500)
                 .end(function (err, res) {
@@ -92,13 +147,7 @@ describe('/admin/practice', function() {
             var agent = request.agent(app);
             agent
                 .post("/admin/practice/" + practiceID + "/user")
-                .send({
-                    provider: 'practice',
-                    role: 'user',
-                    name: 'Test User',
-                    email: 'tes2t@test.com',
-                    password: 'password'
-                })
+                .send(new_user)
                 .set({'Authorization': 'Bearer ' + token})
                 .expect(200)
                 .end(function (err, res) {

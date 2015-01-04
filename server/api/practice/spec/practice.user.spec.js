@@ -68,17 +68,77 @@ describe('/api/practice/user', function() {
         });
     });
     describe('POST /api/practice/user', function () {
+
+        var existing_user = {
+            provider: 'practice',
+            role: 'user',
+            name: { first: 'Test'},
+            contact: {
+                address: {
+                    number: 1022,
+                    direction: "",
+                    street: "Trenton Pl",
+                    zip5: 19801,
+                    country: "United States"
+                },
+                phone: [{description: "Mobile", number: "2679743526"}],
+                email: "test@test.com",
+                canSMS: 1,
+                canVoice: 1,
+                canEmail: 1,
+                preferred: 1
+            },
+            password: 'test'
+        };
+
+        var new_user_no_pass = {
+            provider: 'practice',
+            role: 'user',
+            name: { first: 'Test'},
+            contact: {
+                address: {
+                    number: 1022,
+                    direction: "",
+                    street: "Trenton Pl",
+                    zip5: 19801,
+                    country: "United States"
+                },
+                phone: [{description: "Mobile", number: "2679743526"}],
+                email: "tes2t@test.com",
+                canSMS: 1,
+                canVoice: 1,
+                canEmail: 1,
+                preferred: 1
+            }
+        }
+
+        var new_user = {
+            provider: 'practice',
+            role: 'user',
+            name: { first: 'Test'},
+            contact: {
+                address: {
+                    number: 1022,
+                    direction: "",
+                    street: "Trenton Pl",
+                    zip5: 19801,
+                    country: "United States"
+                },
+                phone: [{description: "Mobile", number: "2679743526"}],
+                email: "tes2t@test.com",
+                canSMS: 1,
+                canVoice: 1,
+                canEmail: 1,
+                preferred: 1
+            },
+            password: 'password'
+        }
+
         it("should say user exists for this new user", function (done) {
             var agent = request.agent(app);
             agent
                 .post("/api/practice/user")
-                .send({
-                    provider: 'practice',
-                    role: 'user',
-                    name: { first: 'Test'},
-                    email: 'test@test.com',
-                    password: 'test'
-                })
+                .send(existing_user)
                 .set({'Authorization': 'Bearer ' + practiceToken})
                 .expect(500)
                 .end(function (err, res) {
@@ -91,12 +151,7 @@ describe('/api/practice/user', function() {
             var agent = request.agent(app);
             agent
                 .post("/api/practice/user")
-                .send({
-                    provider: 'practice',
-                    role: 'user',
-                    name: { first: 'Test'},
-                    email: 'tes2t@test.com'
-                })
+                .send(new_user_no_pass)
                 .set({'Authorization': 'Bearer ' + practiceToken})
                 .expect(500)
                 .end(function (err, res) {
@@ -109,13 +164,7 @@ describe('/api/practice/user', function() {
             var agent = request.agent(app);
             agent
                 .post("/api/practice/user")
-                .send({
-                    provider: 'practice',
-                    role: 'user',
-                    name: { first: 'Test'},
-                    email: 'tes2t@test.com',
-                    password: 'password'
-                })
+                .send(new_user)
                 .expect(401)
                 .end(function (err, res) {
                     expect(res.error.status).to.be.equal(401);
@@ -127,13 +176,7 @@ describe('/api/practice/user', function() {
             var agent = request.agent(app);
             agent
                 .post("/api/practice/user")
-                .send({
-                    provider: 'practice',
-                    role: 'user',
-                    name: { first: 'Test'},
-                    email: 'tes2t@test.com',
-                    password: 'password'
-                })
+                .send(new_user)
                 .set({'Authorization': 'Bearer ' + practiceToken})
                 .expect(200)
                 .end(function (err, res) {

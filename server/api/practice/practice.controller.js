@@ -10,7 +10,7 @@ var getUser = function(practice, email)
 {
     for (var i =0; i < practice.user.length; i++)
     {
-        if (practice.user[i].email == email)
+        if (practice.user[i].contact.email == email)
             return practice.user[i];
     }
 }
@@ -43,7 +43,7 @@ exports.me = function(req, res, next) {
 //Return Logged In user
 exports.userMe = function(req, res, next) {
     getPractice(req,res, function(req, res, err, practice) {
-        res.json(getUser(practice, req.user.email));
+        res.json(getUser(practice, req.user.contact.email));
     });
 };
 
@@ -129,14 +129,6 @@ exports.createSub = function(req, res) {
     });
 };
 
-exports.createWoReq = function(parent, obj, body) {
-    obj.push(body);
-    parent.save(function (err) {
-        if (err) { return false; }
-        return res.json(200, obj[obj.length -1]);
-    });
-}
-
 exports.update = function(req, res) {
     getPractice(req, res, function(req, res, err, practice){
         var params = req.originalUrl.split("/");
@@ -196,7 +188,7 @@ exports.index = function(req, res) {
  */
 exports.createUser = function (req, res, next) {
     getPractice(req, res, function(req, res, err, practice){
-        var user = getUser(practice, req.body.email);
+        var user = getUser(practice, req.body.contact.email);
         if (practice === null || user == null) {
             getPractice(req, res, function (req, res, err, practice) {
                 var params = req.originalUrl.split("/");
@@ -208,8 +200,8 @@ exports.createUser = function (req, res, next) {
                 newUser.provider = 'practice';
                 practice.save(function (err) {
                     if (err) { return handleError(res, err); }
-                    var user = getUser(practice, req.body.email);
-                    var token = auth.signToken(user._id, user.email);
+                    var user = getUser(practice, req.body.contact.email);
+                    var token = auth.signToken(user._id, user.contact.email);
                     res.json({token: token});
                 });
             });
@@ -230,12 +222,12 @@ exports.changePassword = function(req, res, next) {
         if (isAdmin(req))
             var user = getUserById(practice, req.params.id2);
         else
-            var user = getUser(practice, req.user.email);
+            var user = getUser(practice, req.user.contact.email);
         if (user && user.authenticate(String(req.body.oldPassword))) {
             user.password = String(req.body.newPassword);
             practice.save(function (err) {
                 if (err) { return handleError(res, err) };
-                var token = auth.signToken(user._id, user.email);
+                var token = auth.signToken(user._id, user.contact.email);
                 res.json({token: token});
 
             });

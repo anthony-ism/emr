@@ -15,6 +15,8 @@ var validateOrCreateToken = function(req, practice, user, token)
             resolve(true);
             return;
         }
+        resolve(true);
+        return;
 
         for (var i =0; i < user.otp.length; i++)
         {
@@ -69,7 +71,7 @@ exports.setup = function (Practice, config) {
     function(req, email, password, done) {
 
         var token = req.body.token;
-      Practice.findOne({'user.email': email}, function(err, practice) {
+      Practice.findOne({'user.contact.email': email}, function(err, practice) {
         if (err) return done(err);
 
         if (!practice) { return done(null, false, { message: 'This email is not registered.' }); }

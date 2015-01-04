@@ -35,7 +35,21 @@ exports.Practice =  [{
             middle: "Middle",
             last: "Last"
         },
-        email: 'test@test.com',
+        contact: {
+            address: {
+                number: 1022,
+                direction: "",
+                street: "Trenton Pl",
+                zip5: 19801,
+                country: "United States"
+            },
+            phone: [{description: "Mobile", number: "2679743526"}],
+            email: "test@test.com",
+            canSMS: 1,
+            canVoice: 1,
+            canEmail: 1,
+            preferred: 1
+        },
         password: 'test'
     },
         {
@@ -46,7 +60,21 @@ exports.Practice =  [{
                 middle: "Middle",
                 last: "Last"
             },
-            email: 'admin@admin.com',
+            contact: {
+                address: {
+                    number: 1022,
+                    direction: "",
+                    street: "Trenton Pl",
+                    zip5: 19801,
+                    country: "United States"
+                },
+                phone: [{description: "Mobile", number: "2679743526"}],
+                email: "admin@admin.com",
+                canSMS: 1,
+                canVoice: 1,
+                canEmail: 1,
+                preferred: 1
+            },
             password: 'admin'
         }],
     active: true
@@ -83,7 +111,21 @@ exports.Practice =  [{
             middle: "Middle",
             last: "Last"
         },
-        email: 'jpdanks@gmail.com',
+        contact: {
+            address: {
+                number: 1022,
+                direction: "",
+                street: "Trenton Pl",
+                zip5: 19801,
+                country: "United States"
+            },
+            phone: [{description: "Mobile", number: "2679743526"}],
+            email: "jpdanks@gmail.com",
+            canSMS: 1,
+            canVoice: 1,
+            canEmail: 1,
+            preferred: 1
+        },
         password: 'dankys',
         role: 'user'
     },
@@ -95,7 +137,21 @@ exports.Practice =  [{
                 middle: "Middle",
                 last: "Last"
             },
-            email: 'kingtut@gmail.com',
+            contact: {
+                address: {
+                    number: 1022,
+                    direction: "",
+                    street: "Trenton Pl",
+                    zip5: 19801,
+                    country: "United States"
+                },
+                phone: [{description: "Mobile", number: "2679743526"}],
+                email: "kingtut@gmail.com",
+                canSMS: 1,
+                canVoice: 1,
+                canEmail: 1,
+                preferred: 1
+            },
             password: 'admin'
         }],
     active: true

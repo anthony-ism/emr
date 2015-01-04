@@ -31,7 +31,7 @@ function isAuthenticated() {
 
         for (var i =0; i < practice.user.length; i++)
         {
-          if (practice.user[i].email == req.user.email)
+          if (practice.user[i].contact.email == req.user.email)
               req.user = practice.user[i];
         }
         next();
