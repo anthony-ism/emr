@@ -6,7 +6,6 @@ exports.address = {
     number: Number,
     direction: String,
     street: String,
-    zip5: Number,
-    zip4: Number,
+    zip: String,
     country: String
 }
